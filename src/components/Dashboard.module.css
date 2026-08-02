@@ -1,0 +1,305 @@
+.study-start,
+.onboarding {
+  border: 1px solid #f1ddd1;
+  border-radius: 24px;
+  background: #fff0e5;
+}
+.study-start {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+  padding: 24px 28px;
+}
+.study-start b,
+.study-start span {
+  display: block;
+}
+.study-start span {
+  margin-top: 6px;
+  color: #776a5e;
+  font-size: 13px;
+}
+.primary {
+  flex: none;
+  padding: 13px 20px;
+  border: 1px solid #e47760;
+  border-radius: 999px;
+  background: #e47760;
+  color: #fff;
+  font-weight: 700;
+}
+.primary:hover {
+  border-color: #d96550;
+  background: #d96550;
+  box-shadow: 0 9px 18px #d9655030;
+}
+.onboarding {
+  padding: 56px 28px;
+  text-align: center;
+}
+.onboarding h2 {
+  margin: 0;
+  font-size: clamp(28px, 6vw, 40px);
+}
+.onboarding > p:last-of-type {
+  margin: 18px 0 26px;
+  color: #6f6258;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.stats article,
+.activity-calendar,
+.weekly-chart {
+  border: 1px solid #f1ddd1;
+  background: #fffdf9;
+}
+.stats article {
+  padding: 25px;
+  border-radius: 22px;
+}
+.stats b {
+  display: block;
+  font:
+    800 40px 'M PLUS Rounded 1c',
+    sans-serif;
+}
+.stats span {
+  color: #776a5e;
+  font-size: 13px;
+}
+.activity-calendar {
+  margin-top: 16px;
+  padding: 28px;
+  border-radius: 24px;
+}
+.activity-calendar h2 {
+  margin: 0 0 22px;
+  font-size: 28px;
+}
+.weekday-labels,
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 7px;
+  text-align: center;
+}
+.weekday-labels {
+  margin-bottom: 8px;
+  color: #897b6e;
+  font-size: 12px;
+}
+.calendar-days span,
+.calendar-days i {
+  position: relative;
+  display: grid;
+  height: 38px;
+  place-content: center;
+  border-radius: 12px;
+  font-style: normal;
+}
+.calendar-today {
+  border: 2px solid #e47760;
+}
+.studied {
+  background: #ffe0d4;
+  color: #cf624e;
+  font-weight: 700;
+}
+.studied b {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  color: #e47760;
+  font-size: 14px;
+  line-height: 1;
+}
+.weekly-chart {
+  margin-top: 16px;
+  padding: 24px 28px 20px;
+  border-radius: 24px;
+}
+.weekly-chart-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.weekly-chart h2 {
+  margin: 0;
+  font-size: 24px;
+}
+.weekly-chart-head > span {
+  color: #8b776f;
+  font-size: 12px;
+}
+.chart-columns {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-top: 22px;
+}
+.chart-column {
+  display: grid;
+  grid-template-rows: 18px 108px 18px;
+  gap: 6px;
+  text-align: center;
+}
+.chart-value {
+  color: #c96551;
+  font-size: 12px;
+  font-weight: 700;
+}
+.chart-track {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid #f3d8cc;
+}
+.chart-bar {
+  display: block;
+  width: min(28px, 100%);
+  min-height: 0;
+  border-radius: 10px 10px 4px 4px;
+  background: #e88973;
+}
+.chart-day {
+  color: #897b6e;
+  font-size: 12px;
+}
+.bookmarks {
+  margin-top: 16px;
+  padding: 28px;
+  border: 1px solid #f1ddd1;
+  border-radius: 24px;
+  background: #fffdf9;
+}
+.bookmarks-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.bookmarks-heading h2 {
+  margin: 0;
+  font-size: 28px;
+}
+.bookmarks-heading > b {
+  color: #d96651;
+  font:
+    700 22px 'M PLUS Rounded 1c',
+    sans-serif;
+}
+.bookmark-list {
+  display: grid;
+  gap: 10px;
+}
+.bookmark-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 22px;
+  border: 1px solid #f1ddd1;
+  border-radius: 20px;
+  background: #fffaf7;
+}
+.bookmark-item strong {
+  font:
+    500 30px 'Noto Sans JP',
+    sans-serif;
+}
+.bookmark-item rt {
+  color: #a84631;
+  font-size: 0.42em;
+}
+.bookmark-item p {
+  margin: 9px 0 0;
+  color: #6f6258;
+}
+.bookmark-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.bookmark-actions button {
+  border: 0;
+  background: transparent;
+  color: #806f61;
+}
+.bookmark-actions button:hover {
+  color: #a84631;
+}
+.dictionary-link {
+  color: #d96651;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration-color: #c88b7d;
+  text-underline-offset: 3px;
+}
+.empty-bookmarks {
+  margin: 0;
+  padding: 26px 20px;
+  border: 1px dashed #d6c5b4;
+  border-radius: 12px;
+  color: #6f6258;
+  text-align: center;
+}
+@media (max-width: 560px) {
+  .study-start {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .stats {
+    grid-template-columns: 1fr;
+  }
+  .bookmark-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+:global([data-theme='dark']) .study-start,
+:global([data-theme='dark']) .onboarding,
+:global([data-theme='dark']) .stats article,
+:global([data-theme='dark']) .activity-calendar,
+:global([data-theme='dark']) .weekly-chart,
+:global([data-theme='dark']) .bookmarks,
+:global([data-theme='dark']) .bookmark-item {
+  border-color: var(--border);
+  background: var(--surface);
+}
+:global([data-theme='dark']) .study-start,
+:global([data-theme='dark']) .onboarding,
+:global([data-theme='dark']) .bookmark-item {
+  background: var(--paper);
+}
+:global([data-theme='dark']) .stats span,
+:global([data-theme='dark']) .study-start span,
+:global([data-theme='dark']) .weekly-chart-head > span,
+:global([data-theme='dark']) .chart-day,
+:global([data-theme='dark']) .bookmark-item p,
+:global([data-theme='dark']) .empty-bookmarks,
+:global([data-theme='dark']) .onboarding > p:last-of-type {
+  color: var(--muted);
+}
+:global([data-theme='dark']) .calendar-today {
+  border-color: var(--accent);
+}
+:global([data-theme='dark']) .studied {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+:global([data-theme='dark']) .chart-track {
+  border-bottom-color: var(--border);
+}
+:global([data-theme='dark']) .chart-bar {
+  background: var(--accent);
+}

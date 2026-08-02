@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Noto+Sans+JP:wght@400;500;600&display=swap');
+
+:root {
+  --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+  --page: #fff8f3;
+  --ink: #3d3432;
+  --surface: #fffdf9;
+  --paper: #fff0e5;
+  --border: #f1ddd1;
+  --muted: #776a5e;
+  --soft-text: #6f6258;
+  --accent: #e47760;
+  --accent-strong: #d96550;
+  --accent-soft: #ffe6dc;
+  font-family: 'Gowun Dodum', 'M PLUS Rounded 1c', sans-serif;
+  color: var(--ink);
+  background: var(--page);
+  font-synthesis: none;
+}
+
+:root[data-theme='dark'] {
+  --page: #211c1a;
+  --ink: #f2e8e2;
+  --surface: #2b2523;
+  --paper: #352923;
+  --border: #58443d;
+  --muted: #c6afa5;
+  --soft-text: #d8c3b8;
+  --accent: #ef927c;
+  --accent-strong: #f0a08c;
+  --accent-soft: #4a302a;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--page);
+}
+button,
+input {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+a {
+  color: inherit;
+}
+h1,
+h2 {
+  font-family: 'Jua', 'M PLUS Rounded 1c', sans-serif;
+  font-weight: 400;
+}
+.eyebrow {
+  margin: 0 0 10px;
+  color: #dd765f;
+  font-size: 14px;
+  letter-spacing: 0.13em;
+}
+.page-heading {
+  padding: 54px 0 30px;
+}
+.page-heading h1 {
+  margin: 0;
+  font-size: clamp(42px, 7vw, 62px);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+}
+.plain {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.furigana-hidden rt {
+  visibility: hidden;
+}
+
+button,
+input {
+  transition:
+    transform 150ms var(--ease-out),
+    background-color 180ms var(--ease-out),
+    border-color 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out),
+    color 180ms var(--ease-out);
+}
+button:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+button:not(:disabled):active {
+  transform: translateY(0) scale(0.97);
+}
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid #e4776080;
+  outline-offset: 3px;
+}
+.plain:hover {
+  color: #de745f;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
