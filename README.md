@@ -43,6 +43,12 @@ docker compose up --build
 
 Docker 프런트엔드는 [http://localhost:9090](http://localhost:9090)에서 실행됩니다. Nginx가 SPA 라우팅을 처리하므로 `/`, `/study` 주소로 직접 진입해도 정상 동작합니다. 빌드 이미지는 `kotoba-daily:latest`로 등록되며, 컨테이너는 Docker Desktop 재시작 후에도 자동으로 다시 시작됩니다.
 
+## GitHub Pages
+
+`master` 브랜치에 푸시하면 GitHub Actions가 정적 사이트를 빌드해 배포합니다. 최초 배포 전에는 GitHub 저장소의 **Settings → Pages → Build and deployment**에서 Source를 **GitHub Actions**로 선택하세요.
+
+배포 주소: [https://serene1004.github.io/kotoba-daily/](https://serene1004.github.io/kotoba-daily/)
+
 ## 명령어
 
 | 명령어              | 설명                         |
