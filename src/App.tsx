@@ -128,7 +128,11 @@ function App() {
     <main className={styles.shell}>
       <header className={styles.header}>
         <button className={`${styles.logo} plain`} type="button" onClick={() => navigate('/')}>
-          <img className={styles['logo-mark']} src="/favicon.svg" alt="" />
+          <img
+            className={styles['logo-mark']}
+            src={`${import.meta.env.BASE_URL}favicon.svg`}
+            alt=""
+          />
           <span>
             ことば <small>デイリー</small>
           </span>
