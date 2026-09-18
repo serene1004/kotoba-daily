@@ -7,6 +7,12 @@ export type Release = {
 
 export const releases: Release[] = [
   {
+    version: '0.1.1',
+    date: '2026.09.18',
+    title: '학습 버튼 색상을 수정했어요',
+    changes: ['배포 후 발견된 학습 버튼 색상 문제를 수정했어요.'],
+  },
+  {
     version: '0.1.0',
     date: '2026.09.18',
     title: '더 편하게 공부해요',
