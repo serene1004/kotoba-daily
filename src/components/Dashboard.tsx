@@ -1,6 +1,8 @@
+import { ExternalLink, Trash2 } from 'lucide-react';
 import { Furigana } from './Furigana';
 import styles from './Dashboard.module.css';
 import type { Word } from '../types';
+import { readProgressByDate } from '../lib/study';
 
 type Props = {
   bookmarks: Word[];
@@ -8,36 +10,14 @@ type Props = {
   onStudy: () => void;
 };
 
-const today = new Date();
 const weekdays = '일월화수목금토'.split('');
 const dateKey = (date: Date) => date.toLocaleDateString('sv-SE');
 
-function getProgressByDate() {
-  return Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index)).reduce<
-    Record<string, number>
-  >((progress, key) => {
-    if (key?.startsWith('studied:')) {
-      return {
-        ...progress,
-        [key.replace('studied:', '')]: Number(localStorage.getItem(key)) || 0,
-      };
-    }
-
-    if (key?.startsWith('progress:') && progress[key.replace('progress:', '')] === undefined) {
-      return {
-        ...progress,
-        [key.replace('progress:', '')]: Number(localStorage.getItem(key)) || 0,
-      };
-    }
-
-    return progress;
-  }, {});
-}
-
 export function Dashboard({ bookmarks, onRemoveBookmark, onStudy }: Props) {
+  const today = new Date();
   const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  const progressByDate = getProgressByDate();
+  const progressByDate = readProgressByDate();
   const completedDates = Object.entries(progressByDate)
     .filter(([, progress]) => progress >= 10)
     .map(([date]) => date);
@@ -86,7 +66,7 @@ export function Dashboard({ bookmarks, onRemoveBookmark, onStudy }: Props) {
               <b>오늘 {todayStudied}개를 학습했어요.</b>
               <span>하루 10단어, 부담 없이 이어가요.</span>
             </div>
-            <button className={styles.primary} type="button" onClick={onStudy}>
+            <button className={`${styles.primary} button-primary`} type="button" onClick={onStudy}>
               공부하러 가기
             </button>
           </section>
@@ -164,21 +144,21 @@ export function Dashboard({ bookmarks, onRemoveBookmark, onStudy }: Props) {
           <p className="eyebrow">FIRST STEP</p>
           <h2>오늘의 첫 10단어를 시작해 볼까요?</h2>
           <p>뜻을 적고, 사전 뜻을 확인한 뒤, 헷갈리는 단어만 단어장에 남겨요.</p>
-          <button className={styles.primary} type="button" onClick={onStudy}>
+          <button className={`${styles.primary} button-primary`} type="button" onClick={onStudy}>
             첫 학습 시작하기
           </button>
         </section>
       )}
 
-      <section className={styles.bookmarks}>
-        <div className={styles['bookmarks-heading']}>
-          <div>
-            <p className="eyebrow">WORD LIST</p>
-            <h2>단어장</h2>
+      {bookmarks.length > 0 && (
+        <section className={styles.bookmarks}>
+          <div className={styles['bookmarks-heading']}>
+            <div>
+              <p className="eyebrow">WORD LIST</p>
+              <h2>단어장</h2>
+            </div>
+            <b>{bookmarks.length}</b>
           </div>
-          <b>{bookmarks.length}</b>
-        </div>
-        {bookmarks.length ? (
           <div className={styles['bookmark-list']}>
             {bookmarks.map((word) => (
               <article key={word.id} className={styles['bookmark-item']}>
@@ -186,30 +166,34 @@ export function Dashboard({ bookmarks, onRemoveBookmark, onStudy }: Props) {
                   <strong>
                     <Furigana expression={word.jp} reading={word.reading} />
                   </strong>
-                  <p>{word.meaning}</p>
+                  <p>{word.meaningKo}</p>
                 </div>
                 <div className={styles['bookmark-actions']}>
                   <a
-                    className={styles['dictionary-link']}
+                    className={`${styles['icon-button']} tooltip`}
                     href={`https://jisho.org/search/${encodeURIComponent(word.jp)}`}
                     target="_blank"
                     rel="noreferrer"
+                    aria-label="사전에서 자세히 보기"
+                    data-tooltip="사전에서 자세히 보기"
                   >
-                    사전 ↗
+                    <ExternalLink size={17} aria-hidden="true" />
                   </a>
-                  <button type="button" onClick={() => onRemoveBookmark(word.id)}>
-                    삭제
+                  <button
+                    className={`${styles['icon-button']} tooltip`}
+                    type="button"
+                    onClick={() => onRemoveBookmark(word.id)}
+                    aria-label="단어장에서 제거"
+                    data-tooltip="단어장에서 제거"
+                  >
+                    <Trash2 size={17} aria-hidden="true" />
                   </button>
                 </div>
               </article>
             ))}
           </div>
-        ) : (
-          <p className={styles['empty-bookmarks']}>
-            헷갈리는 단어를 저장해 나중에 다시 확인해 보세요.
-          </p>
-        )}
-      </section>
+        </section>
+      )}
     </section>
   );
 }

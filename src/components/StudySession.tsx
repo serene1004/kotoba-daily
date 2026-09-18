@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Bookmark } from 'lucide-react';
 import { Furigana } from './Furigana';
 import styles from './StudySession.module.css';
 import type { Word } from '../types';
@@ -7,13 +8,26 @@ type Props = {
   word?: Word;
   progress: number;
   total: number;
-  onBookmark: () => void;
-  onRemember: () => void;
+  onAnswer: (correct: boolean) => void;
+  onNext: () => void;
+  isBookmarked: boolean;
+  onToggleBookmark: () => void;
 };
 
-export function StudySession({ word, progress, total, onBookmark, onRemember }: Props) {
+const normalize = (value: string) => value.toLowerCase().replace(/[\s.,!?。？！]/g, '');
+
+export function StudySession({
+  word,
+  progress,
+  total,
+  onAnswer,
+  onNext,
+  isBookmarked,
+  onToggleBookmark,
+}: Props) {
   const [answer, setAnswer] = useState('');
   const [shown, setShown] = useState(false);
+  const [correct, setCorrect] = useState(false);
   const [showFurigana, setShowFurigana] = useState(false);
 
   if (!word) {
@@ -29,13 +43,21 @@ export function StudySession({ word, progress, total, onBookmark, onRemember }: 
   const moveNext = (action: () => void) => {
     setAnswer('');
     setShown(false);
+    setCorrect(false);
     setShowFurigana(false);
     action();
   };
   const showAnswer = () => {
     if (answer.trim()) {
+      const acceptedMeanings = word.meaningKo.split(/[,/·]/).map(normalize);
+      const isCorrect = acceptedMeanings.includes(normalize(answer));
+      setCorrect(isCorrect);
       setShown(true);
     }
+  };
+  const finishAnswer = (isCorrect: boolean) => {
+    onAnswer(isCorrect);
+    moveNext(onNext);
   };
 
   return (
@@ -59,7 +81,7 @@ export function StudySession({ word, progress, total, onBookmark, onRemember }: 
         <span>생각나는 뜻을 적어 보세요.</span>
         <div className={styles['answer-input']}>
           <button
-            className={styles['furigana-toggle']}
+            className={`${styles['furigana-toggle']} tooltip`}
             type="button"
             aria-label="후리가나 보기"
             aria-pressed={showFurigana}
@@ -82,32 +104,67 @@ export function StudySession({ word, progress, total, onBookmark, onRemember }: 
           />
         </div>
         {shown && (
-          <div className={styles.answer}>
-            <b>사전 뜻 · {word.meaning}</b>
-            <a
-              className={styles['dictionary-link']}
-              href={`https://jisho.org/search/${encodeURIComponent(word.jp)}`}
-              target="_blank"
-              rel="noreferrer"
+          <>
+            <button
+              className={`${styles['card-bookmark']} tooltip`}
+              type="button"
+              aria-label={isBookmarked ? '단어장에서 제거' : '단어장에 저장'}
+              aria-pressed={isBookmarked}
+              data-tooltip={isBookmarked ? '단어장에서 제거' : '단어장에 저장'}
+              onClick={onToggleBookmark}
             >
-              사전에서 자세히 보기 ↗
-            </a>
-          </div>
+              <Bookmark
+                size={18}
+                fill={isBookmarked ? 'currentColor' : 'none'}
+                aria-hidden="true"
+              />
+            </button>
+            <div className={styles.answer}>
+              <div className={styles['answer-summary']}>
+                <div className={styles['answer-row']}>
+                  <span className={styles['answer-label']}>사전 뜻</span>
+                  <strong>{word.meaningKo}</strong>
+                  {word.partOfSpeech && (
+                    <span className={styles['part-chip']}>{word.partOfSpeech}</span>
+                  )}
+                  <a
+                    className={styles['dictionary-link']}
+                    href={`https://jisho.org/search/${encodeURIComponent(word.jp)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    자세히 보기 ↗
+                  </a>
+                </div>
+              </div>
+              {word.example && (
+                <div className={styles.example}>
+                  <span className={styles['example-label']}>예문</span>
+                  <p>
+                    {word.example.japanese}
+                    <br />
+                    {word.example.korean}
+                  </p>
+                </div>
+              )}
+            </div>
+          </>
         )}
       </article>
       {shown ? (
         <div className={styles.actions}>
-          <button type="button" onClick={() => moveNext(onBookmark)}>
-            단어장에 저장
-          </button>
-          <button className={styles.primary} type="button" onClick={() => moveNext(onRemember)}>
+          <button
+            className={`${styles.primary} button-primary`}
+            type="button"
+            onClick={() => finishAnswer(correct)}
+          >
             {isLast ? '오늘 학습 완료하기' : '다음 단어 보기'}
           </button>
         </div>
       ) : (
         <div className={styles.actions}>
           <button
-            className={styles.primary}
+            className={`${styles.primary} button-primary`}
             type="button"
             disabled={!answer.trim()}
             onClick={showAnswer}

@@ -23,17 +23,6 @@
 }
 .primary {
   flex: none;
-  padding: 13px 20px;
-  border: 1px solid #e47760;
-  border-radius: 999px;
-  background: #e47760;
-  color: #fff;
-  font-weight: 700;
-}
-.primary:hover {
-  border-color: #d96550;
-  background: #d96550;
-  box-shadow: 0 9px 18px #d9655030;
 }
 .onboarding {
   padding: 56px 28px;
@@ -229,28 +218,22 @@
   align-items: center;
   gap: 15px;
 }
-.bookmark-actions button {
+.icon-button {
+  position: relative;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  place-items: center;
   border: 0;
+  border-radius: 50%;
   background: transparent;
   color: #806f61;
 }
-.bookmark-actions button:hover {
+.icon-button:hover,
+.icon-button:focus-visible {
+  background: #ffe9df;
   color: #a84631;
-}
-.dictionary-link {
-  color: #d96651;
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration-color: #c88b7d;
-  text-underline-offset: 3px;
-}
-.empty-bookmarks {
-  margin: 0;
-  padding: 26px 20px;
-  border: 1px dashed #d6c5b4;
-  border-radius: 12px;
-  color: #6f6258;
-  text-align: center;
 }
 @media (max-width: 560px) {
   .study-start {
@@ -286,7 +269,6 @@
 :global([data-theme='dark']) .weekly-chart-head > span,
 :global([data-theme='dark']) .chart-day,
 :global([data-theme='dark']) .bookmark-item p,
-:global([data-theme='dark']) .empty-bookmarks,
 :global([data-theme='dark']) .onboarding > p:last-of-type {
   color: var(--muted);
 }
@@ -302,4 +284,12 @@
 }
 :global([data-theme='dark']) .chart-bar {
   background: var(--accent);
+}
+:global([data-theme='dark']) .icon-button {
+  color: var(--muted);
+}
+:global([data-theme='dark']) .icon-button:hover,
+:global([data-theme='dark']) .icon-button:focus-visible {
+  background: var(--accent-soft);
+  color: var(--accent);
 }

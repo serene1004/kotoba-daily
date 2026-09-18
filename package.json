@@ -1,15 +1,17 @@
 {
   "name": "kotoba-daily",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "packageManager": "pnpm@11.17.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "prepare:data": "node scripts/convert-jlpt-csv.mjs",
+    "enrich:data": "node --env-file-if-exists=.env.local scripts/enrich-jlpt-csv.mjs",
     "lint": "eslint src --ext .ts,.tsx --max-warnings=0",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"*.{ts,tsx,js,cjs,json,md}\" \".eslintrc.cjs\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"*.{ts,tsx,js,cjs,json,md}\" \".eslintrc.cjs\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"scripts/**/*.{mjs,js}\" \"*.{ts,tsx,js,cjs,json,md}\" \".eslintrc.cjs\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"scripts/**/*.{mjs,js}\" \"*.{ts,tsx,js,cjs,json,md}\" \".eslintrc.cjs\"",
     "preview": "vite preview"
   },
   "dependencies": {

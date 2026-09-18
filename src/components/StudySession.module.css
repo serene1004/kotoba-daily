@@ -85,7 +85,6 @@
   box-shadow: 0 0 0 4px #e477601c;
 }
 .furigana-toggle {
-  position: relative;
   width: 36px;
   height: 36px;
   margin: 0;
@@ -101,42 +100,8 @@
 .furigana-toggle[aria-pressed='true'] {
   background: #ffd7ca;
 }
-.furigana-toggle::after,
-.furigana-toggle::before {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 150ms var(--ease-out);
-}
-.furigana-toggle::after {
-  content: attr(data-tooltip);
-  bottom: calc(100% + 8px);
-  left: 50%;
-  width: max-content;
-  padding: 7px 10px;
-  border-radius: 5px;
-  background: #263238;
-  color: #fff;
-  font:
-    12px 'Gowun Dodum',
-    sans-serif;
-  transform: translateX(-50%);
-}
-.furigana-toggle::before {
-  content: '';
-  bottom: calc(100% - 2px);
-  left: 50%;
-  border: 5px solid transparent;
-  border-top-color: #263238;
-  transform: translateX(-50%);
-}
-.furigana-toggle:hover::after,
-.furigana-toggle:hover::before,
-.furigana-toggle:focus-visible::after,
-.furigana-toggle:focus-visible::before {
-  opacity: 1;
-}
 .answer {
+  position: relative;
   display: grid;
   gap: 6px;
   width: min(360px, 100%);
@@ -145,14 +110,89 @@
   border-top: 1px solid #f2d7cb;
   animation: reveal 220ms var(--ease-out) both;
 }
-.answer b {
+.card-bookmark {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #d96651;
+}
+.card-bookmark:hover,
+.card-bookmark[aria-pressed='true'] {
+  background: #ffe1d6;
+}
+.answer-summary {
+  display: grid;
+  gap: 9px;
+  width: 100%;
+  text-align: left;
+}
+.answer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.answer-label {
+  flex: 0 0 52px;
+  color: #977c70;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.answer-row strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: #504440;
-  font-size: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.part-chip {
+  flex: 0 0 auto;
+  padding: 3px 8px;
+  border: 1px solid #e9bbae;
+  border-radius: 999px;
+  color: #d96651;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.answer-row .dictionary-link {
+  flex: 0 0 auto;
+  margin-left: auto;
+  white-space: nowrap;
+}
+.example {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+  padding-top: 11px;
+  border-top: 1px solid #f2d7cb;
+  text-align: left;
+}
+.example-label {
+  flex: 0 0 52px;
+  color: #977c70;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+.example p {
+  margin: 0;
+  color: #504440;
+  font-size: 0.9375rem;
+  line-height: 1.65;
 }
 .dictionary-link {
-  justify-self: center;
   color: #d96651;
-  font-size: 13px;
+  font-size: 0.875rem;
   font-weight: 700;
   text-decoration-color: #c88b7d;
   text-underline-offset: 3px;
@@ -173,20 +213,6 @@
 .actions button:not(.primary):hover {
   border-color: #e7b8a7;
   background: #fff0e5;
-}
-.primary {
-  border-color: #e47760 !important;
-  background: #e47760 !important;
-  color: #fff;
-}
-.primary:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-.primary:not(:disabled):hover {
-  border-color: #d96550 !important;
-  background: #d96550 !important;
-  box-shadow: 0 9px 18px #d9655030;
 }
 @keyframes reveal {
   from {
@@ -219,8 +245,7 @@
 :global([data-theme='dark']) .meter {
   background: var(--accent-soft);
 }
-:global([data-theme='dark']) .meter i,
-:global([data-theme='dark']) .primary {
+:global([data-theme='dark']) .meter i {
   background: var(--accent) !important;
   border-color: var(--accent) !important;
 }
@@ -229,7 +254,8 @@
   background: var(--paper);
 }
 :global([data-theme='dark']) .card > span,
-:global([data-theme='dark']) .answer b {
+:global([data-theme='dark']) .answer-label,
+:global([data-theme='dark']) .answer-row strong {
   color: var(--soft-text);
 }
 :global([data-theme='dark']) .answer-input input,
@@ -241,6 +267,16 @@
 :global([data-theme='dark']) .answer {
   border-top-color: var(--border);
 }
+:global([data-theme='dark']) .part-chip {
+  border-color: var(--border);
+  color: var(--accent);
+}
+:global([data-theme='dark']) .example {
+  border-top-color: var(--border);
+}
+:global([data-theme='dark']) .example p {
+  color: var(--ink);
+}
 :global([data-theme='dark']) .furigana-toggle {
   background: var(--accent-soft);
   color: var(--accent);
@@ -248,11 +284,4 @@
 :global([data-theme='dark']) .furigana-toggle:hover,
 :global([data-theme='dark']) .furigana-toggle[aria-pressed='true'] {
   background: #5a3830;
-}
-:global([data-theme='dark']) .furigana-toggle::after {
-  background: var(--ink);
-  color: var(--page);
-}
-:global([data-theme='dark']) .furigana-toggle::before {
-  border-top-color: var(--ink);
 }

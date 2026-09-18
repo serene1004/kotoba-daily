@@ -106,6 +106,70 @@ input:focus-visible {
 .plain:hover {
   color: #de745f;
 }
+.button-primary {
+  padding: 13px 20px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+}
+.button-primary:hover {
+  border-color: var(--accent-strong);
+  background: var(--accent-strong);
+  box-shadow: 0 9px 18px #d9655030;
+}
+.button-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.tooltip {
+  position: relative;
+}
+.tooltip::after,
+.tooltip::before {
+  position: absolute;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms var(--ease-out);
+}
+.tooltip::after {
+  content: attr(data-tooltip);
+  bottom: calc(100% + 8px);
+  left: 50%;
+  width: max-content;
+  padding: 7px 10px;
+  border-radius: 5px;
+  background: #263238;
+  color: #fff;
+  font:
+    12px 'Gowun Dodum',
+    sans-serif;
+  transform: translateX(-50%);
+}
+.tooltip::before {
+  content: '';
+  bottom: calc(100% - 2px);
+  left: 50%;
+  border: 5px solid transparent;
+  border-top-color: #263238;
+  transform: translateX(-50%);
+}
+.tooltip:hover::after,
+.tooltip:hover::before,
+.tooltip:focus-visible::after,
+.tooltip:focus-visible::before {
+  opacity: 1;
+}
+
+:root[data-theme='dark'] .tooltip::after {
+  background: var(--ink);
+  color: var(--page);
+}
+:root[data-theme='dark'] .tooltip::before {
+  border-top-color: var(--ink);
+}
 
 @media (prefers-reduced-motion: reduce) {
   *,
