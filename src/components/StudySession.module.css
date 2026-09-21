@@ -104,7 +104,7 @@
   position: relative;
   display: grid;
   gap: 6px;
-  width: min(360px, 100%);
+  width: min(520px, 100%);
   margin: 20px auto 0;
   padding-top: 15px;
   border-top: 1px solid #f2d7cb;
@@ -137,8 +137,8 @@
 }
 .answer-row {
   display: flex;
-  align-items: center;
   gap: 10px;
+  align-items: start;
   min-width: 0;
 }
 .answer-label {
@@ -147,6 +147,12 @@
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: -0.03em;
+}
+.answer-content {
+  display: grid;
+  flex: 1;
+  gap: 8px;
+  min-width: 0;
 }
 .answer-row strong {
   min-width: 0;
@@ -165,9 +171,14 @@
   font-weight: 700;
   line-height: 1.2;
 }
+.answer-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 .answer-row .dictionary-link {
-  flex: 0 0 auto;
-  margin-left: auto;
+  margin-left: 0;
   white-space: nowrap;
 }
 .example {

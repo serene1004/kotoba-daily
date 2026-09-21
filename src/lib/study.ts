@@ -57,22 +57,20 @@ export const reviewDelay = (correctCount: number) => [3, 7, 14][Math.min(correct
 export const pickQuest = (
   words: Word[],
   known: string[],
-  bookmarks: Word[],
   progress: Record<string, WordProgress>,
   seen: string[],
   day: string,
 ) => {
   const knownIds = new Set(known);
   const reviewSet = new Set(
-    bookmarks
-      .filter((word) => {
-        const current = progress[word.id];
-        return !current?.nextReviewAt || current.nextReviewAt <= day;
-      })
-      .map((word) => word.id),
+    words
+      .filter(({ id }) => progress[id]?.nextReviewAt && progress[id].nextReviewAt <= day)
+      .map(({ id }) => id),
   );
   const seenSet = new Set(seen);
-  const reviews = shuffle(words.filter((word) => reviewSet.has(word.id))).slice(0, 3);
+  const reviews = shuffle(
+    words.filter((word) => reviewSet.has(word.id) && !seenSet.has(word.id)),
+  ).slice(0, 3);
   const fresh = shuffle(
     words.filter(
       (word) => !knownIds.has(word.id) && !reviewSet.has(word.id) && !seenSet.has(word.id),
@@ -80,7 +78,11 @@ export const pickQuest = (
   ).slice(0, 7);
   const fallback = shuffle(
     words.filter(
-      (word) => !knownIds.has(word.id) && !reviewSet.has(word.id) && !fresh.includes(word),
+      (word) =>
+        !knownIds.has(word.id) &&
+        !reviewSet.has(word.id) &&
+        !seenSet.has(word.id) &&
+        !fresh.includes(word),
     ),
   );
 

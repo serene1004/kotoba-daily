@@ -38,7 +38,7 @@ function App() {
 
   useEffect(() => {
     if (quest.length || !words.length) return;
-    const nextQuest = pickQuest(words, known, bookmarks, progress, seen, day);
+    const nextQuest = pickQuest(words, known, progress, seen, day);
     const nextSeen = [...new Set([...seen, ...nextQuest])];
     setQuest(nextQuest);
     setSeen(nextSeen);
@@ -103,7 +103,7 @@ function App() {
     writeStorage('bookmarks', nextBookmarks);
   };
   const startAnotherQuest = () => {
-    const nextQuest = pickQuest(words, known, bookmarks, progress, seen, day);
+    const nextQuest = pickQuest(words, known, progress, seen, day);
     if (!nextQuest.length) return;
     const nextSeen = [...new Set([...seen, ...nextQuest])];
     setQuest(nextQuest);

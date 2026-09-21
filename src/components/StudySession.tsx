@@ -14,8 +14,6 @@ type Props = {
   onToggleBookmark: () => void;
 };
 
-const normalize = (value: string) => value.toLowerCase().replace(/[\s.,!?。？！]/g, '');
-
 export function StudySession({
   word,
   progress,
@@ -27,7 +25,7 @@ export function StudySession({
 }: Props) {
   const [answer, setAnswer] = useState('');
   const [shown, setShown] = useState(false);
-  const [correct, setCorrect] = useState(false);
+  const [skipped, setSkipped] = useState(false);
   const [showFurigana, setShowFurigana] = useState(false);
 
   if (!word) {
@@ -43,17 +41,19 @@ export function StudySession({
   const moveNext = (action: () => void) => {
     setAnswer('');
     setShown(false);
-    setCorrect(false);
+    setSkipped(false);
     setShowFurigana(false);
     action();
   };
   const showAnswer = () => {
     if (answer.trim()) {
-      const acceptedMeanings = word.meaningKo.split(/[,/·]/).map(normalize);
-      const isCorrect = acceptedMeanings.includes(normalize(answer));
-      setCorrect(isCorrect);
       setShown(true);
     }
+  };
+  const skipAnswer = () => {
+    onAnswer(false);
+    setSkipped(true);
+    setShown(true);
   };
   const finishAnswer = (isCorrect: boolean) => {
     onAnswer(isCorrect);
@@ -78,7 +78,6 @@ export function StudySession({
         <strong>
           <Furigana expression={word.jp} reading={word.reading} show={showFurigana} />
         </strong>
-        <span>생각나는 뜻을 적어 보세요.</span>
         <div className={styles['answer-input']}>
           <button
             className={`${styles['furigana-toggle']} tooltip`}
@@ -92,6 +91,7 @@ export function StudySession({
           </button>
           <input
             value={answer}
+            placeholder="생각나는 뜻을 적어 보세요."
             disabled={shown}
             onChange={(event) => setAnswer(event.target.value)}
             onKeyDown={(event) => {
@@ -123,18 +123,22 @@ export function StudySession({
               <div className={styles['answer-summary']}>
                 <div className={styles['answer-row']}>
                   <span className={styles['answer-label']}>사전 뜻</span>
-                  <strong>{word.meaningKo}</strong>
-                  {word.partOfSpeech && (
-                    <span className={styles['part-chip']}>{word.partOfSpeech}</span>
-                  )}
-                  <a
-                    className={styles['dictionary-link']}
-                    href={`https://jisho.org/search/${encodeURIComponent(word.jp)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    자세히 보기 ↗
-                  </a>
+                  <div className={styles['answer-content']}>
+                    <strong>{word.meaningKo}</strong>
+                    <div className={styles['answer-meta']}>
+                      {word.partOfSpeech && (
+                        <span className={styles['part-chip']}>{word.partOfSpeech}</span>
+                      )}
+                      <a
+                        className={styles['dictionary-link']}
+                        href={`https://jisho.org/search/${encodeURIComponent(word.jp)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        사전 보기 ↗
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
               {word.example && (
@@ -153,16 +157,34 @@ export function StudySession({
       </article>
       {shown ? (
         <div className={styles.actions}>
-          <button
-            className={`${styles.primary} button-primary`}
-            type="button"
-            onClick={() => finishAnswer(correct)}
-          >
-            {isLast ? '오늘 학습 완료하기' : '다음 단어 보기'}
-          </button>
+          {skipped ? (
+            <button
+              className={`${styles.primary} button-primary`}
+              type="button"
+              onClick={() => moveNext(onNext)}
+            >
+              {isLast ? '오늘 학습 완료하기' : '다음 단어 보기'}
+            </button>
+          ) : (
+            <>
+              <button type="button" onClick={() => finishAnswer(false)}>
+                정답이 아니에요
+              </button>
+              <button
+                className={`${styles.primary} button-primary`}
+                type="button"
+                onClick={() => finishAnswer(true)}
+              >
+                {isLast ? '정답이에요 · 완료' : '정답이에요'}
+              </button>
+            </>
+          )}
         </div>
       ) : (
         <div className={styles.actions}>
+          <button type="button" onClick={skipAnswer}>
+            모르겠어요
+          </button>
           <button
             className={`${styles.primary} button-primary`}
             type="button"
