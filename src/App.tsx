@@ -5,11 +5,10 @@ import styles from './App.module.css';
 import { Dashboard } from './components/Dashboard';
 import { StudySession } from './components/StudySession';
 import { Updates } from './components/Updates';
+import { useStudyProgress } from './hooks/useStudyProgress';
 import { useVocabulary } from './hooks/useVocabulary';
-import { addDays, pickQuest, readStorage, reviewDelay, writeStorage } from './lib/study';
-import type { Word, WordProgress } from './types';
+import { readStorage, writeStorage } from './lib/study';
 
-const day = new Date().toLocaleDateString('sv-SE');
 type Theme = 'light' | 'dark';
 
 function App() {
@@ -22,97 +21,22 @@ function App() {
     if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
-  const [known, setKnown] = useState<string[]>(() => readStorage('known', []));
-  const [bookmarks, setBookmarks] = useState<Word[]>(() => readStorage('bookmarks', []));
-  const [progress, setProgress] = useState<Record<string, WordProgress>>(() =>
-    readStorage('wordProgress', {}),
-  );
-  const [quest, setQuest] = useState<string[]>(() => readStorage(`quest:${day}`, []));
-  const [seen, setSeen] = useState<string[]>(() =>
-    readStorage(`seen:${day}`, readStorage(`quest:${day}`, [])),
-  );
-  const [index, setIndex] = useState(() => readStorage(`progress:${day}`, 0));
-  const [studied, setStudied] = useState(() =>
-    readStorage(`studied:${day}`, readStorage(`progress:${day}`, 0)),
-  );
-
-  useEffect(() => {
-    if (quest.length || !words.length) return;
-    const nextQuest = pickQuest(words, known, progress, seen, day);
-    const nextSeen = [...new Set([...seen, ...nextQuest])];
-    setQuest(nextQuest);
-    setSeen(nextSeen);
-    writeStorage(`quest:${day}`, nextQuest);
-    writeStorage(`seen:${day}`, nextSeen);
-  }, [bookmarks, known, progress, quest.length, seen, words]);
+  const {
+    advance,
+    bookmarks,
+    index,
+    quest,
+    word,
+    recordAnswer,
+    removeBookmark,
+    startAnotherQuest,
+    toggleBookmark,
+  } = useStudyProgress(words);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     writeStorage('theme', theme);
   }, [theme]);
-
-  const word = words.find((item) => item.id === quest[index]);
-  const advance = () => {
-    const nextIndex = index + 1;
-    const nextStudied = studied + 1;
-    setIndex(nextIndex);
-    setStudied(nextStudied);
-    writeStorage(`progress:${day}`, nextIndex);
-    writeStorage(`studied:${day}`, nextStudied);
-  };
-  const updateProgress = (wordId: string, correct: boolean) => {
-    setProgress((current) => {
-      const previous = current[wordId] || { correctCount: 0, wrongCount: 0 };
-      const next = {
-        ...current,
-        [wordId]: {
-          correctCount: previous.correctCount + (correct ? 1 : 0),
-          wrongCount: previous.wrongCount + (correct ? 0 : 1),
-          lastStudiedAt: day,
-          nextReviewAt: addDays(day, correct ? reviewDelay(previous.correctCount + 1) : 1),
-        },
-      };
-      writeStorage('wordProgress', next);
-      return next;
-    });
-  };
-  const recordAnswer = (correct: boolean) => {
-    if (!word) return;
-    if (correct) {
-      const nextKnown = [...new Set([...known, word.id])];
-      setKnown(nextKnown);
-      writeStorage('known', nextKnown);
-    } else {
-      const nextKnown = known.filter((id) => id !== word.id);
-      setKnown(nextKnown);
-      writeStorage('known', nextKnown);
-    }
-    updateProgress(word.id, correct);
-  };
-  const toggleBookmark = () => {
-    if (!word) return;
-    const nextBookmarks = bookmarks.some((item) => item.id === word.id)
-      ? bookmarks.filter((item) => item.id !== word.id)
-      : [...bookmarks, word];
-    setBookmarks(nextBookmarks);
-    writeStorage('bookmarks', nextBookmarks);
-  };
-  const removeBookmark = (id: string) => {
-    const nextBookmarks = bookmarks.filter((item) => item.id !== id);
-    setBookmarks(nextBookmarks);
-    writeStorage('bookmarks', nextBookmarks);
-  };
-  const startAnotherQuest = () => {
-    const nextQuest = pickQuest(words, known, progress, seen, day);
-    if (!nextQuest.length) return;
-    const nextSeen = [...new Set([...seen, ...nextQuest])];
-    setQuest(nextQuest);
-    setSeen(nextSeen);
-    setIndex(0);
-    writeStorage(`quest:${day}`, nextQuest);
-    writeStorage(`seen:${day}`, nextSeen);
-    writeStorage(`progress:${day}`, 0);
-  };
 
   const study = (
     <>
