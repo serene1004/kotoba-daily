@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Bookmark } from 'lucide-react';
 import { Furigana } from './Furigana';
 import styles from './StudySession.module.css';
+import { readStorage, writeStorage } from '../lib/study';
 import type { Word } from '../types';
 
 type Props = {
@@ -26,7 +27,9 @@ export function StudySession({
   const [answer, setAnswer] = useState('');
   const [shown, setShown] = useState(false);
   const [skipped, setSkipped] = useState(false);
-  const [showFurigana, setShowFurigana] = useState(false);
+  const [showFurigana, setShowFurigana] = useState(() =>
+    readStorage('showFurigana', false),
+  );
 
   if (!word) {
     return (
@@ -42,8 +45,14 @@ export function StudySession({
     setAnswer('');
     setShown(false);
     setSkipped(false);
-    setShowFurigana(false);
     action();
+  };
+  const toggleFurigana = () => {
+    setShowFurigana((current) => {
+      const next = !current;
+      writeStorage('showFurigana', next);
+      return next;
+    });
   };
   const showAnswer = () => {
     if (answer.trim()) {
@@ -85,7 +94,7 @@ export function StudySession({
             aria-label="후리가나 보기"
             aria-pressed={showFurigana}
             data-tooltip="후리가나"
-            onClick={() => setShowFurigana((current) => !current)}
+            onClick={toggleFurigana}
           >
             あ
           </button>
