@@ -27,9 +27,7 @@ export function StudySession({
   const [answer, setAnswer] = useState('');
   const [shown, setShown] = useState(false);
   const [skipped, setSkipped] = useState(false);
-  const [showFurigana, setShowFurigana] = useState(() =>
-    readStorage('showFurigana', false),
-  );
+  const [showFurigana, setShowFurigana] = useState(() => readStorage('showFurigana', false));
 
   if (!word) {
     return (
