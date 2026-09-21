@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "prepare:data": "node scripts/convert-jlpt-csv.mjs",
+    "check:data": "node scripts/check-data.mjs",
     "enrich:data": "node --env-file-if-exists=.env.local scripts/enrich-jlpt-csv.mjs",
     "lint": "eslint src --ext .ts,.tsx --max-warnings=0",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"scripts/**/*.{mjs,js}\" \"*.{ts,tsx,js,cjs,json,md}\" \".eslintrc.cjs\"",

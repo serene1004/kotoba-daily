@@ -1,8 +1,11 @@
 import type { Word, WordProgress } from '../types';
 
+const STORAGE_PREFIX = 'kotoba-daily:v1:';
+const storageKey = (key: string) => `${STORAGE_PREFIX}${key}`;
+
 export const readStorage = <T>(key: string, fallback: T): T => {
   try {
-    const stored = localStorage.getItem(key);
+    const stored = localStorage.getItem(storageKey(key)) ?? localStorage.getItem(key);
     return stored ? (JSON.parse(stored) as T) : fallback;
   } catch {
     return fallback;
@@ -11,7 +14,7 @@ export const readStorage = <T>(key: string, fallback: T): T => {
 
 export const writeStorage = (key: string, value: unknown) => {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    localStorage.setItem(storageKey(key), JSON.stringify(value));
   } catch {
     // Storage can be unavailable in private browsing or a restricted context.
   }
@@ -23,11 +26,16 @@ export const readProgressByDate = () => {
   for (let index = 0; index < localStorage.length; index += 1) {
     const key = localStorage.key(index);
     if (key) {
-      if (key.startsWith('studied:')) {
-        progress[key.replace('studied:', '')] = Number(localStorage.getItem(key)) || 0;
-      } else if (key.startsWith('progress:')) {
-        const date = key.replace('progress:', '');
-        if (progress[date] === undefined) {
+      const namespaced = key.startsWith(STORAGE_PREFIX);
+      const appKey = namespaced ? key.slice(STORAGE_PREFIX.length) : key;
+      if (appKey.startsWith('studied:')) {
+        const date = appKey.replace('studied:', '');
+        if (progress[date] === undefined || namespaced) {
+          progress[date] = Number(localStorage.getItem(key)) || 0;
+        }
+      } else if (appKey.startsWith('progress:')) {
+        const date = appKey.replace('progress:', '');
+        if (progress[date] === undefined || namespaced) {
           progress[date] = Number(localStorage.getItem(key)) || 0;
         }
       }
