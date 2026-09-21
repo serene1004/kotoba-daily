@@ -28,6 +28,7 @@ export function useStudyProgress(words: Word[]) {
   const [studied, setStudied] = useState(() =>
     readStorage(`studied:${todayKey()}`, readStorage(`progress:${todayKey()}`, 0)),
   );
+  const [correctCount, setCorrectCount] = useState(() => readStorage(`correct:${todayKey()}`, 0));
 
   useEffect(() => {
     const refreshDay = () => setDay((current) => (current === todayKey() ? current : todayKey()));
@@ -47,6 +48,7 @@ export function useStudyProgress(words: Word[]) {
     setSeen(readStorage(`seen:${day}`, readStorage(`quest:${day}`, [])));
     setIndex(readStorage(`progress:${day}`, 0));
     setStudied(readStorage(`studied:${day}`, readStorage(`progress:${day}`, 0)));
+    setCorrectCount(readStorage(`correct:${day}`, 0));
   }, [day]);
 
   useEffect(() => {
@@ -76,6 +78,13 @@ export function useStudyProgress(words: Word[]) {
 
   const recordAnswer = (correct: boolean) => {
     if (!word) return;
+    if (correct) {
+      setCorrectCount((current) => {
+        const next = current + 1;
+        writeStorage(`correct:${day}`, next);
+        return next;
+      });
+    }
     const nextKnown = correct
       ? [...new Set([...known, word.id])]
       : known.filter((id) => id !== word.id);
@@ -120,13 +129,16 @@ export function useStudyProgress(words: Word[]) {
     setQuest(nextQuest);
     setSeen(nextSeen);
     setIndex(0);
+    setCorrectCount(0);
     writeStorage(`quest:${day}`, nextQuest);
     writeStorage(`seen:${day}`, nextSeen);
     writeStorage(`progress:${day}`, 0);
+    writeStorage(`correct:${day}`, 0);
   };
 
   return {
     bookmarks,
+    correctCount,
     index,
     quest,
     studied,

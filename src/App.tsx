@@ -24,6 +24,7 @@ function App() {
   const {
     advance,
     bookmarks,
+    correctCount,
     index,
     quest,
     word,
@@ -61,6 +62,10 @@ function App() {
       ) : index >= quest.length && quest.length ? (
         <section className={styles.complete}>
           <h2>오늘의 학습을 마쳤어요.</h2>
+          <strong className={styles['complete-score']}>
+            {correctCount}/{quest.length}
+          </strong>
+          <p>이번 세트에서 맞힌 단어예요.</p>
           <p>새로운 단어로 한 세트 더 학습할 수 있어요.</p>
           <div className={styles['complete-actions']}>
             <button className={styles.secondary} type="button" onClick={() => navigate('/')}>
