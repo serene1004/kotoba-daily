@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import styles from './App.module.css';
 import { Dashboard } from './components/Dashboard';
 import { StudySession } from './components/StudySession';
@@ -65,8 +65,11 @@ function App() {
           <strong className={styles['complete-score']}>
             {correctCount}/{quest.length}
           </strong>
-          <p>이번 세트에서 맞힌 단어예요.</p>
-          <p>새로운 단어로 한 세트 더 학습할 수 있어요.</p>
+          <p>
+            이번 세트에서 맞힌 단어예요.
+            <br />
+            새로운 단어로 한 세트 더 학습할 수 있어요.
+          </p>
           <div className={styles['complete-actions']}>
             <button className={styles.secondary} type="button" onClick={() => navigate('/')}>
               대시보드로 가기
@@ -97,7 +100,7 @@ function App() {
   return (
     <main className={styles.shell}>
       <header className={styles.header}>
-        <button className={`${styles.logo} plain`} type="button" onClick={() => navigate('/')}>
+        <Link className={styles.logo} to="/">
           <img
             className={styles['logo-mark']}
             src={`${import.meta.env.BASE_URL}favicon.svg`}
@@ -106,7 +109,7 @@ function App() {
           <span>
             ことば <small>デイリー</small>
           </span>
-        </button>
+        </Link>
         <div className={styles['header-actions']}>
           <button
             className={styles.updates}

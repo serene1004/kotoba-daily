@@ -1,7 +1,7 @@
 .quest {
-  padding: 30px;
+  padding: var(--space-9);
   border: 1px solid #f1ddd1;
-  border-radius: 28px;
+  border-radius: var(--space-8);
   background: #fffdf9;
   box-shadow: 0 18px 45px #c9856c14;
 }
@@ -12,11 +12,11 @@
 }
 .quest h2 {
   margin: 0;
-  font-size: 31px;
+  font-size: var(--font-size-3xl);
 }
 .meter {
-  height: 9px;
-  margin: 22px 0;
+  height: var(--space-3);
+  margin: var(--space-6) 0;
   border-radius: 999px;
   background: #ffe5db;
 }
@@ -34,9 +34,9 @@
   justify-content: center;
   min-width: 0;
   min-height: 300px;
-  padding: 25px;
+  padding: var(--space-7);
   border: 1px solid #f5d7c8;
-  border-radius: 24px;
+  border-radius: var(--space-7);
   background: #fff0e5;
   text-align: center;
 }
@@ -56,26 +56,26 @@
   letter-spacing: 0.04em;
 }
 .card > span {
-  margin-top: 32px;
+  margin-top: var(--space-9);
   color: #6f6258;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   letter-spacing: -0.02em;
 }
 .answer-input {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
   width: min(360px, 100%);
   max-width: 100%;
-  margin: 25px auto 0;
+  margin: var(--space-7) auto 0;
 }
 .answer-input input {
   min-width: 0;
   flex: 1;
   margin: 0;
-  padding: 13px;
+  padding: var(--space-4);
   border: 1px solid #edcbbb;
-  border-radius: 16px;
+  border-radius: var(--space-5);
   background: #fffaf9;
   color: #3d3432;
   text-align: center;
@@ -85,11 +85,11 @@
   box-shadow: 0 0 0 4px #e477601c;
 }
 .furigana-toggle {
-  width: 36px;
-  height: 36px;
+  width: var(--space-9);
+  height: var(--space-9);
   margin: 0;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--space-3);
   background: #ffe6dc;
   color: #d96651;
   font:
@@ -103,20 +103,20 @@
 .answer {
   position: relative;
   display: grid;
-  gap: 6px;
+  gap: var(--space-2);
   width: min(520px, 100%);
-  margin: 20px auto 0;
-  padding-top: 15px;
+  margin: var(--space-6) auto 0;
+  padding-top: var(--space-5);
   border-top: 1px solid #f2d7cb;
   animation: reveal 220ms var(--ease-out) both;
 }
 .card-bookmark {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: var(--space-6);
+  right: var(--space-6);
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: var(--space-9);
+  height: var(--space-9);
   margin: 0;
   padding: 0;
   place-items: center;
@@ -131,50 +131,50 @@
 }
 .answer-summary {
   display: grid;
-  gap: 9px;
+  gap: var(--space-3);
   width: 100%;
   text-align: left;
 }
 .answer-row {
   display: flex;
-  gap: 10px;
+  gap: var(--space-3);
   align-items: start;
   min-width: 0;
 }
 .answer-label {
   flex: 0 0 52px;
   color: #977c70;
-  font-size: 0.8125rem;
+  font-size: var(--font-size-xs);
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 .answer-content {
   display: grid;
   flex: 1;
-  gap: 8px;
+  gap: var(--space-3);
   min-width: 0;
 }
 .answer-row strong {
   min-width: 0;
   overflow-wrap: anywhere;
   color: #504440;
-  font-size: 1rem;
+  font-size: var(--font-size-md);
   font-weight: 700;
 }
 .part-chip {
   flex: 0 0 auto;
-  padding: 3px 8px;
+  padding: var(--space-1) var(--space-3);
   border: 1px solid #e9bbae;
   border-radius: 999px;
   color: #d96651;
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 700;
   line-height: 1.2;
 }
 .answer-meta {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
   flex-wrap: wrap;
 }
 .answer-row .dictionary-link {
@@ -183,27 +183,27 @@
 }
 .example {
   display: flex;
-  gap: 10px;
-  margin-top: 5px;
-  padding-top: 11px;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding-top: var(--space-4);
   border-top: 1px solid #f2d7cb;
   text-align: left;
 }
 .example-label {
   flex: 0 0 52px;
   color: #977c70;
-  font-size: 0.8125rem;
+  font-size: var(--font-size-xs);
   font-weight: 700;
 }
 .example p {
   margin: 0;
   color: #504440;
-  font-size: 0.9375rem;
+  font-size: var(--font-size-md);
   line-height: 1.65;
 }
 .dictionary-link {
   color: #d96651;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   font-weight: 700;
   text-decoration-color: #c88b7d;
   text-underline-offset: 3px;
@@ -211,11 +211,11 @@
 .actions {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-top: 17px;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
 }
 .actions button:not(.primary) {
-  padding: 13px 20px;
+  padding: var(--space-4) var(--space-6);
   border: 1px solid #edcbbb;
   border-radius: 999px;
   background: #fffaf7;
@@ -237,11 +237,11 @@
 }
 @media (max-width: 560px) {
   .quest {
-    padding: 20px;
+    padding: var(--space-6);
   }
   .card {
     min-height: 260px;
-    padding: 20px;
+    padding: var(--space-6);
   }
   .answer-input {
     width: 100%;

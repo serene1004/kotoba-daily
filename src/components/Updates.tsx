@@ -10,7 +10,7 @@ export function Updates() {
       </div>
 
       {releases.map((release) => (
-        <section key={release.date} className={styles.release}>
+        <section key={`${release.date}-${release.version ?? 'initial'}`} className={styles.release}>
           <div className={styles.meta}>
             <span>{release.version ? `v${release.version}` : '초기 배포'}</span>
             <time dateTime={release.date.replaceAll('.', '-')}>{release.date}</time>

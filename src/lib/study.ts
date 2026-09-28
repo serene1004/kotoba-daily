@@ -21,7 +21,8 @@ export const writeStorage = (key: string, value: unknown) => {
 };
 
 export const readProgressByDate = () => {
-  const progress: Record<string, number> = {};
+  const studiedByDate: Record<string, number> = {};
+  const progressByDate: Record<string, number> = {};
 
   for (let index = 0; index < localStorage.length; index += 1) {
     const key = localStorage.key(index);
@@ -30,19 +31,19 @@ export const readProgressByDate = () => {
       const appKey = namespaced ? key.slice(STORAGE_PREFIX.length) : key;
       if (appKey.startsWith('studied:')) {
         const date = appKey.replace('studied:', '');
-        if (progress[date] === undefined || namespaced) {
-          progress[date] = Number(localStorage.getItem(key)) || 0;
+        if (studiedByDate[date] === undefined || namespaced) {
+          studiedByDate[date] = Number(localStorage.getItem(key)) || 0;
         }
       } else if (appKey.startsWith('progress:')) {
         const date = appKey.replace('progress:', '');
-        if (progress[date] === undefined || namespaced) {
-          progress[date] = Number(localStorage.getItem(key)) || 0;
+        if (progressByDate[date] === undefined || namespaced) {
+          progressByDate[date] = Number(localStorage.getItem(key)) || 0;
         }
       }
     }
   }
 
-  return progress;
+  return { ...progressByDate, ...studiedByDate };
 };
 
 const shuffle = <T>(items: T[]) => {

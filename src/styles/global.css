@@ -2,6 +2,32 @@
 
 :root {
   --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+  --space-0: 0px;
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 20px;
+  --space-7: 24px;
+  --space-8: 28px;
+  --space-9: 32px;
+  --space-10: 40px;
+  --space-11: 48px;
+  --space-12: 56px;
+  --space-13: 64px;
+  --space-14: 72px;
+  --space-15: 80px;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 28px;
+  --font-size-3xl: 32px;
+  --font-size-4xl: 40px;
+  --font-size-icon: 18px;
+  --font-size-display: clamp(42px, 7vw, 64px);
   --page: #fff8f3;
   --ink: #3d3432;
   --surface: #fffdf9;
@@ -60,24 +86,19 @@ h2 {
   font-weight: 400;
 }
 .eyebrow {
-  margin: 0 0 10px;
+  margin: 0 0 var(--space-3);
   color: #dd765f;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   letter-spacing: 0.13em;
 }
 .page-heading {
-  padding: 54px 0 30px;
+  padding: var(--space-12) 0 var(--space-9);
 }
 .page-heading h1 {
   margin: 0;
-  font-size: clamp(42px, 7vw, 62px);
+  font-size: var(--font-size-display);
   line-height: 1.05;
   letter-spacing: -0.05em;
-}
-.plain {
-  border: 0;
-  background: transparent;
-  cursor: pointer;
 }
 .furigana-hidden rt {
   visibility: hidden;
@@ -92,22 +113,16 @@ input {
     box-shadow 180ms var(--ease-out),
     color 180ms var(--ease-out);
 }
-button:not(:disabled):hover {
-  transform: translateY(-2px);
-}
 button:not(:disabled):active {
-  transform: translateY(0) scale(0.97);
+  transform: scale(0.97);
 }
 button:focus-visible,
 input:focus-visible {
   outline: 3px solid #e4776080;
   outline-offset: 3px;
 }
-.plain:hover {
-  color: #de745f;
-}
 .button-primary {
-  padding: 13px 20px;
+  padding: var(--space-4) var(--space-6);
   border: 1px solid var(--accent);
   border-radius: 999px;
   background: var(--accent);
@@ -139,12 +154,12 @@ input:focus-visible {
   bottom: calc(100% + 8px);
   left: 50%;
   width: max-content;
-  padding: 7px 10px;
-  border-radius: 5px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--space-2);
   background: #263238;
   color: #fff;
   font:
-    12px 'Gowun Dodum',
+    var(--font-size-xs) 'Gowun Dodum',
     sans-serif;
   transform: translateX(-50%);
 }

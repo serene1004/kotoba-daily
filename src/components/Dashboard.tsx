@@ -1,4 +1,5 @@
-import { ExternalLink, Trash2 } from 'lucide-react';
+import { BookOpen, BookmarkMinus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Furigana } from './Furigana';
 import styles from './Dashboard.module.css';
 import type { Word } from '../types';
@@ -12,8 +13,20 @@ type Props = {
 
 const weekdays = '일월화수목금토'.split('');
 const dateKey = (date: Date) => date.toLocaleDateString('sv-SE');
+const BOOKMARKS_PER_PAGE = 10;
 
 export function Dashboard({ bookmarks, onRemoveBookmark, onStudy }: Props) {
+  const [bookmarkPage, setBookmarkPage] = useState(1);
+  const bookmarkPageCount = Math.ceil(bookmarks.length / BOOKMARKS_PER_PAGE);
+  const visibleBookmarks = bookmarks.slice(
+    (bookmarkPage - 1) * BOOKMARKS_PER_PAGE,
+    bookmarkPage * BOOKMARKS_PER_PAGE,
+  );
+
+  useEffect(() => {
+    setBookmarkPage((page) => Math.min(page, Math.max(bookmarkPageCount, 1)));
+  }, [bookmarkPageCount]);
+
   const today = new Date();
   const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -160,7 +173,7 @@ export function Dashboard({ bookmarks, onRemoveBookmark, onStudy }: Props) {
             <b>{bookmarks.length}</b>
           </div>
           <div className={styles['bookmark-list']}>
-            {bookmarks.map((word) => (
+            {visibleBookmarks.map((word) => (
               <article key={word.id} className={styles['bookmark-item']}>
                 <div>
                   <strong>
@@ -177,21 +190,56 @@ export function Dashboard({ bookmarks, onRemoveBookmark, onStudy }: Props) {
                     aria-label="사전에서 자세히 보기"
                     data-tooltip="사전에서 자세히 보기"
                   >
-                    <ExternalLink size={17} aria-hidden="true" />
+                    <BookOpen size={17} aria-hidden="true" />
                   </a>
                   <button
                     className={`${styles['icon-button']} tooltip`}
                     type="button"
                     onClick={() => onRemoveBookmark(word.id)}
-                    aria-label="단어장에서 제거"
-                    data-tooltip="단어장에서 제거"
+                    aria-label="단어장 저장 해제"
+                    data-tooltip="단어장 저장 해제"
                   >
-                    <Trash2 size={17} aria-hidden="true" />
+                    <BookmarkMinus size={17} aria-hidden="true" />
                   </button>
                 </div>
               </article>
             ))}
           </div>
+          {bookmarkPageCount > 1 && (
+            <nav className={styles.pagination} aria-label="단어장 페이지 이동">
+              <button
+                className={`${styles['page-button']} tooltip`}
+                type="button"
+                onClick={() => setBookmarkPage((page) => page - 1)}
+                disabled={bookmarkPage === 1}
+                aria-label="이전 페이지"
+                data-tooltip="이전 페이지"
+              >
+                <ChevronLeft size={18} aria-hidden="true" />
+              </button>
+              {Array.from({ length: bookmarkPageCount }, (_, index) => index + 1).map((page) => (
+                <button
+                  key={page}
+                  className={styles['page-button']}
+                  type="button"
+                  onClick={() => setBookmarkPage(page)}
+                  aria-current={bookmarkPage === page ? 'page' : undefined}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                className={`${styles['page-button']} tooltip`}
+                type="button"
+                onClick={() => setBookmarkPage((page) => page + 1)}
+                disabled={bookmarkPage === bookmarkPageCount}
+                aria-label="다음 페이지"
+                data-tooltip="다음 페이지"
+              >
+                <ChevronRight size={18} aria-hidden="true" />
+              </button>
+            </nav>
+          )}
         </section>
       )}
     </section>
