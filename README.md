@@ -1,15 +1,17 @@
 # ことば · Kotoba Daily
 
-부담 없이 하루 10개씩 일본어 단어를 학습하는 React 앱입니다. 뜻을 직접 입력해 확인하고, 헷갈리는 단어는 단어장에 저장할 수 있습니다.
+JLPT N5·N4·N3 중 공부할 레벨을 골라 일본어 단어를 학습하는 React 앱입니다. 한 세트 최대 10개 단어를 공부하고, 헷갈리는 단어는 단어장에 저장할 수 있습니다.
 
 배포별 변경 사항은 [`CHANGELOG.md`](CHANGELOG.md)에서 확인할 수 있습니다.
 
 ## 주요 기능
 
-- 홈 대시보드에서 오늘의 학습 현황, 달력, 주간 차트 확인
-- 정적 JSON에서 매일 일본어 단어 10개 학습
-- 복습 단어 최대 3개와 신규 단어 최대 7개를 섞어 출제
+- 대시보드에서 JLPT 레벨을 선택해 학습을 시작하거나 진행 중인 세트를 이어서 학습
+- 레벨별 학습 단어와 복습 예정 단어 수 확인
+- 선택 레벨 또는 전체 레벨의 학습량을 월간 달력과 최근 7일 차트로 확인
+- 복습 단어와 아직 학습하지 않은 단어를 섞어 한 세트 최대 10개 출제
 - 정답 횟수에 따라 복습 간격을 3일·7일·14일로 조정
+- 학습 중 화면을 나갈 때 진행을 저장하고, 돌아와 이어서 학습
 - 후리가나 표시 토글과 Jisho 사전 링크
 - 기억나지 않는 단어를 대시보드 단어장에 저장·재확인
 - 라이트·다크 모드 전환 및 테마 저장
@@ -25,9 +27,9 @@ pnpm prepare:data -- src/n4.csv public/data/n4.json
 pnpm prepare:data -- src/n3.csv public/data/n3.json
 ```
 
-현재 N5 718개, N4 666개, N3 2,139개 단어가 포함되어 있습니다. N4/N3 원본의 뜻은 영어이며, 읽는 법이 없는 행은 변환 시 제외합니다. JLPT 단어 목록은 공개된 커뮤니티 자료를 바탕으로 하므로 공식 출제 범위로 간주하지 마세요.
+현재 N5 718개, N4 666개, N3 2,139개 단어가 포함되어 있습니다. 원본 CSV의 뜻은 영어이며, 읽는 법이 없는 행은 변환 시 제외합니다. JLPT 단어 목록은 공개된 커뮤니티 자료를 바탕으로 하므로 공식 출제 범위로 간주하지 마세요.
 
-N4/N3 원본은 [elzup/jlpt-word-list](https://github.com/elzup/jlpt-word-list)의 `src/n4.csv`, `src/n3.csv`에서 가져왔으며, 원본 저장소의 MIT 라이선스는 `LICENSE.jlpt-word-list`에 포함했습니다.
+레벨별 원본 CSV는 [elzup/jlpt-word-list](https://github.com/elzup/jlpt-word-list)의 `src/n5.csv`, `src/n4.csv`, `src/n3.csv`에서 가져왔으며, 원본 저장소의 MIT 라이선스는 `LICENSE.jlpt-word-list`에 포함했습니다.
 
 전체 N5 데이터를 AI로 보강하려면 서버 키를 노출하지 않도록 로컬에서 다음을 실행합니다. 이 명령은 원본 CSV를 가져오고, OpenAI Responses API로 한국어 뜻·품사·예문을 만든 뒤, JSON Schema 검증을 통과한 경우에만 `public/data/n5.json`을 덮어씁니다.
 
@@ -46,14 +48,14 @@ pnpm enrich:data -- N3
 
 `OPENAI_MODEL`, `ENRICH_BATCH_SIZE`, `ENRICH_CONCURRENCY` 환경변수로 모델·배치 크기·동시 요청 수를 조정할 수 있습니다. API 키는 `.env.local`에만 저장하며 Git에 커밋하지 않습니다.
 
-보강 중 오류가 발생하면 `scripts/.cache/n5-enrichment-progress.json`에 완료된 배치를 저장합니다. 같은 명령을 다시 실행하면 완료된 배치는 건너뛰고 중단된 배치부터 재개합니다. 전체 생성이 끝나면 체크포인트는 자동 삭제됩니다.
+보강 중 오류가 발생하면 `scripts/.cache/<level>-enrichment-progress.json`에 완료된 배치를 저장합니다. 같은 레벨과 설정으로 다시 실행하면 완료된 배치는 건너뛰고 중단된 배치부터 재개합니다. 전체 생성이 끝나면 체크포인트는 자동 삭제됩니다.
 
-학습 결과는 `wordProgress`에 저장합니다. 단어장에 저장한 오답은 다음 날, 정답 단어는 정답 횟수에 따라 3일·7일·14일 뒤 복습 대상으로 선정됩니다.
+오답으로 기록한 단어는 다음 날 복습 대상으로 선정되고, 정답 단어는 정답 횟수에 따라 3일·7일·14일 뒤 복습 대상으로 선정됩니다. 복습 일정은 단어장 저장 여부와 별도로 관리됩니다.
 
 ## 화면 구성
 
 - `/`: 대시보드와 단어장
-- `/study`: 오늘의 일본어 단어 학습
+- `/study`: 선택한 JLPT 레벨의 단어 학습
 
 ## 기술 구성
 
@@ -96,6 +98,7 @@ Docker 프런트엔드는 [http://localhost:9090](http://localhost:9090)에서 �
 | `pnpm build`        | 타입 검사와 프로덕션 빌드     |
 | `pnpm preview`      | 프로덕션 빌드 미리보기        |
 | `pnpm prepare:data` | CSV를 기본 JSON 형식으로 변환 |
+| `pnpm check:data`   | 단어 데이터 검증 (기본 N5)    |
 | `pnpm enrich:data`  | 지정한 레벨의 단어 데이터를 AI로 보강 (기본 N5) |
 | `pnpm lint`         | ESLint 검사                   |
 | `pnpm format`       | Prettier로 전체 포맷          |
