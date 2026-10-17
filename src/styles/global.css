@@ -92,7 +92,7 @@ h2 {
   letter-spacing: 0.13em;
 }
 .page-heading {
-  padding: var(--space-12) 0 var(--space-9);
+  padding: var(--space-7) 0 var(--space-6);
 }
 .page-heading h1 {
   margin: 0;

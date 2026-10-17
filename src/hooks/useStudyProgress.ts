@@ -3,8 +3,11 @@ import type { Word, WordProgress } from '../types';
 import { addDays, pickQuest, readStorage, reviewDelay, writeStorage } from '../lib/study';
 
 const todayKey = () => new Date().toLocaleDateString('sv-SE');
+const readLevelStorage = <T>(key: string, level: string, day: string, fallback: T) =>
+  readStorage(`${key}:${level}:${day}`, level === 'N5' ? readStorage(`${key}:${day}`, fallback) : fallback);
 
-export function useStudyProgress(words: Word[]) {
+export function useStudyProgress(words: Word[], level: string = 'N5') {
+  const studyWords = useMemo(() => words.filter((word) => word.jlptLevel === level), [level, words]);
   const [day, setDay] = useState(todayKey);
   const [known, setKnown] = useState<string[]>(() => readStorage('known', []));
   const [bookmarkIds, setBookmarkIds] = useState<string[]>(() => {
@@ -20,15 +23,16 @@ export function useStudyProgress(words: Word[]) {
   const [progress, setProgress] = useState<Record<string, WordProgress>>(() =>
     readStorage('wordProgress', {}),
   );
-  const [quest, setQuest] = useState<string[]>(() => readStorage(`quest:${todayKey()}`, []));
+  const questKey = `${level}:${day}`;
+  const [quest, setQuest] = useState<string[]>(() => readLevelStorage('quest', level, todayKey(), []));
   const [seen, setSeen] = useState<string[]>(() =>
-    readStorage(`seen:${todayKey()}`, readStorage(`quest:${todayKey()}`, [])),
+    readLevelStorage('seen', level, todayKey(), readLevelStorage('quest', level, todayKey(), [])),
   );
-  const [index, setIndex] = useState(() => readStorage(`progress:${todayKey()}`, 0));
+  const [index, setIndex] = useState(() => readLevelStorage('progress', level, todayKey(), 0));
   const [studied, setStudied] = useState(() =>
-    readStorage(`studied:${todayKey()}`, readStorage(`progress:${todayKey()}`, 0)),
+    readLevelStorage('studied', level, todayKey(), readLevelStorage('progress', level, todayKey(), 0)),
   );
-  const [correctCount, setCorrectCount] = useState(() => readStorage(`correct:${todayKey()}`, 0));
+  const [correctCount, setCorrectCount] = useState(() => readLevelStorage('correct', level, todayKey(), 0));
 
   useEffect(() => {
     const refreshDay = () => setDay((current) => (current === todayKey() ? current : todayKey()));
@@ -44,36 +48,52 @@ export function useStudyProgress(words: Word[]) {
   }, []);
 
   useEffect(() => {
-    setQuest(readStorage(`quest:${day}`, []));
-    setSeen(readStorage(`seen:${day}`, readStorage(`quest:${day}`, [])));
-    setIndex(readStorage(`progress:${day}`, 0));
-    setStudied(readStorage(`studied:${day}`, readStorage(`progress:${day}`, 0)));
-    setCorrectCount(readStorage(`correct:${day}`, 0));
-  }, [day]);
+    setQuest(readLevelStorage('quest', level, day, []));
+    setSeen(readLevelStorage('seen', level, day, readLevelStorage('quest', level, day, [])));
+    setIndex(readLevelStorage('progress', level, day, 0));
+    setStudied(readLevelStorage('studied', level, day, readLevelStorage('progress', level, day, 0)));
+    setCorrectCount(readLevelStorage('correct', level, day, 0));
+  }, [day, level]);
 
   useEffect(() => {
     if (quest.length || !words.length) return;
-    const nextQuest = pickQuest(words, known, progress, seen, day);
+    const nextQuest = pickQuest(studyWords, known, progress, seen, day);
     const nextSeen = [...new Set([...seen, ...nextQuest])];
     setQuest(nextQuest);
     setSeen(nextSeen);
-    writeStorage(`quest:${day}`, nextQuest);
-    writeStorage(`seen:${day}`, nextSeen);
-  }, [day, known, progress, quest.length, seen, words]);
+    writeStorage(`quest:${questKey}`, nextQuest);
+    writeStorage(`seen:${questKey}`, nextSeen);
+  }, [day, known, progress, quest.length, seen, studyWords]);
 
   const bookmarks = useMemo(
     () => words.filter((word) => bookmarkIds.includes(word.id)),
     [bookmarkIds, words],
   );
-  const word = words.find((item) => item.id === quest[index]);
+  const levelSummaries = useMemo(
+    () =>
+      (['N5', 'N4', 'N3'] as const).map((jlptLevel) => {
+        const levelWords = words.filter((item) => item.jlptLevel === jlptLevel);
+        return {
+          level: jlptLevel,
+          total: levelWords.length,
+          learned: levelWords.filter(({ id }) => progress[id]?.correctCount || progress[id]?.wrongCount)
+            .length,
+          dueReviews: levelWords.filter(
+            ({ id }) => progress[id]?.nextReviewAt && progress[id].nextReviewAt <= day,
+          ).length,
+        };
+      }),
+    [day, progress, words],
+  );
+  const word = studyWords.find((item) => item.id === quest[index]);
 
   const advance = () => {
     const nextIndex = index + 1;
     const nextStudied = studied + 1;
     setIndex(nextIndex);
     setStudied(nextStudied);
-    writeStorage(`progress:${day}`, nextIndex);
-    writeStorage(`studied:${day}`, nextStudied);
+    writeStorage(`progress:${questKey}`, nextIndex);
+    writeStorage(`studied:${questKey}`, nextStudied);
   };
 
   const recordAnswer = (correct: boolean) => {
@@ -81,7 +101,7 @@ export function useStudyProgress(words: Word[]) {
     if (correct) {
       setCorrectCount((current) => {
         const next = current + 1;
-        writeStorage(`correct:${day}`, next);
+        writeStorage(`correct:${questKey}`, next);
         return next;
       });
     }
@@ -123,21 +143,22 @@ export function useStudyProgress(words: Word[]) {
   };
 
   const startAnotherQuest = () => {
-    const nextQuest = pickQuest(words, known, progress, seen, day);
+    const nextQuest = pickQuest(studyWords, known, progress, seen, day);
     if (!nextQuest.length) return;
     const nextSeen = [...new Set([...seen, ...nextQuest])];
     setQuest(nextQuest);
     setSeen(nextSeen);
     setIndex(0);
     setCorrectCount(0);
-    writeStorage(`quest:${day}`, nextQuest);
-    writeStorage(`seen:${day}`, nextSeen);
-    writeStorage(`progress:${day}`, 0);
-    writeStorage(`correct:${day}`, 0);
+    writeStorage(`quest:${questKey}`, nextQuest);
+    writeStorage(`seen:${questKey}`, nextSeen);
+    writeStorage(`progress:${questKey}`, 0);
+    writeStorage(`correct:${questKey}`, 0);
   };
 
   return {
     bookmarks,
+    levelSummaries,
     correctCount,
     index,
     quest,

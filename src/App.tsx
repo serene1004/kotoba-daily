@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
-import { Link, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Route, Routes, useBlocker, useLocation, useNavigate } from 'react-router-dom';
 import styles from './App.module.css';
 import { Dashboard } from './components/Dashboard';
 import { StudySession } from './components/StudySession';
+import { StudyExitDialog } from './components/StudyExitDialog';
 import { Updates } from './components/Updates';
 import { useStudyProgress } from './hooks/useStudyProgress';
 import { useVocabulary } from './hooks/useVocabulary';
@@ -14,7 +15,12 @@ type Theme = 'light' | 'dark';
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { words, loading, error } = useVocabulary();
+  const [level, setLevel] = useState<'N5' | 'N4' | 'N3'>(() => {
+    const saved = readStorage<string>('studyLevel', 'N5');
+    return saved === 'N4' || saved === 'N3' ? saved : 'N5';
+  });
+  const [studyStarted, setStudyStarted] = useState(false);
+  const { words, loading, failedLevels } = useVocabulary();
   const [theme, setTheme] = useState<Theme>(() => {
     const savedTheme = readStorage<string>('theme', '');
 
@@ -26,38 +32,77 @@ function App() {
     bookmarks,
     correctCount,
     index,
+    levelSummaries,
     quest,
     word,
     recordAnswer,
     removeBookmark,
     startAnotherQuest,
     toggleBookmark,
-  } = useStudyProgress(words);
+  } = useStudyProgress(words, level);
+  const isActiveStudy =
+    location.pathname === '/study' && studyStarted && quest.length > 0 && index < quest.length;
+  const blocker = useBlocker(isActiveStudy);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     writeStorage('theme', theme);
   }, [theme]);
 
+  useEffect(() => writeStorage('studyLevel', level), [level]);
+
+  const startStudy = () => {
+    if (quest.length > 0 && index >= quest.length) startAnotherQuest();
+    setStudyStarted(true);
+    navigate('/study');
+  };
+
+  const selectStudyLevel = (selectedLevel: 'N5' | 'N4' | 'N3') => setLevel(selectedLevel);
+
   const study = (
     <>
       <section className="page-heading">
-        <p className="eyebrow">하루 10단어. 부담 없는</p>
-        <h1>오늘의 일본어</h1>
+        <p className="eyebrow">{level} VOCABULARY</p>
+        <h1>{level} 단어 학습</h1>
       </section>
       {loading ? (
         <section className={styles.complete}>
           <p>오늘의 단어를 불러오는 중이에요.</p>
         </section>
-      ) : error ? (
+      ) : !words.some((word) => word.jlptLevel === level) ? (
         <section className={styles.complete}>
-          <h2>단어를 불러오지 못했어요.</h2>
-          <p>잠시 후 페이지를 새로고침해 주세요.</p>
+          <h2>{failedLevels.includes(level) ? '단어를 불러오지 못했어요.' : '학습할 단어가 없어요.'}</h2>
+          <p>
+            {failedLevels.includes(level)
+              ? '잠시 후 페이지를 새로고침해 주세요.'
+              : `${level} 단어 데이터를 준비한 뒤 다시 시도해 주세요.`}
+          </p>
         </section>
-      ) : !words.length ? (
+      ) : !studyStarted ? (
         <section className={styles.complete}>
-          <h2>학습할 단어가 없어요.</h2>
-          <p>N5 단어 데이터를 준비한 뒤 다시 시도해 주세요.</p>
+          <p className="eyebrow">오늘 공부할 레벨</p>
+          <h2>어떤 단어를 공부할까요?</h2>
+          <p>선택한 JLPT 레벨의 단어로 오늘의 학습을 시작해요.</p>
+          <div className={styles['level-options']} role="group" aria-label="JLPT 레벨 선택">
+            {(['N5', 'N4', 'N3'] as const).map((option) => (
+              <button
+                key={option}
+                className={`${styles['level-option']} ${level === option ? styles['level-selected'] : ''}`}
+                type="button"
+                aria-pressed={level === option}
+                onClick={() => setLevel(option)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+          <button
+            className={`${styles.primary} button-primary`}
+            type="button"
+            onClick={() => setStudyStarted(true)}
+          >
+            {level} 단어 공부 시작하기
+          </button>
         </section>
       ) : index >= quest.length && quest.length ? (
         <section className={styles.complete}>
@@ -138,14 +183,24 @@ function App() {
           element={
             <Dashboard
               bookmarks={bookmarks}
+              selectedLevel={level}
+              resumeAvailable={index > 0 && index < quest.length}
+              levelSummaries={levelSummaries}
               onRemoveBookmark={removeBookmark}
-              onStudy={() => navigate('/study')}
+              onStudy={startStudy}
+              onSelectLevel={selectStudyLevel}
             />
           }
         />
         <Route path="/study" element={study} />
         <Route path="/updates" element={<Updates />} />
       </Routes>
+      {blocker.state === 'blocked' && (
+        <StudyExitDialog
+          onContinue={() => blocker.reset?.()}
+          onExit={() => blocker.proceed?.()}
+        />
+      )}
     </main>
   );
 }

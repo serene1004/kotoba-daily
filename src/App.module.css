@@ -108,6 +108,27 @@
 .primary {
   margin-top: var(--space-4);
 }
+.level-options {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+.level-option {
+  min-width: 72px;
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 700;
+}
+.level-option:hover,
+.level-selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
 
 @media (max-width: 560px) {
   .complete-actions {

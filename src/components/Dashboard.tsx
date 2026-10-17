@@ -1,247 +1,50 @@
-import { BookOpen, BookmarkMinus, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Furigana } from './Furigana';
 import styles from './Dashboard.module.css';
 import type { Word } from '../types';
-import { readProgressByDate } from '../lib/study';
+import { useDashboardActivity } from '../hooks/useDashboardActivity';
+import { BookmarkList } from './dashboard/BookmarkList';
+import { LearningActivity } from './dashboard/LearningActivity';
+import { LearningLevelSelector } from './dashboard/LearningLevelSelector';
 
 type Props = {
   bookmarks: Word[];
+  selectedLevel: 'N5' | 'N4' | 'N3';
+  resumeAvailable: boolean;
+  levelSummaries: { level: 'N5' | 'N4' | 'N3'; total: number; learned: number; dueReviews: number }[];
   onRemoveBookmark: (id: string) => void;
   onStudy: () => void;
+  onSelectLevel: (level: 'N5' | 'N4' | 'N3') => void;
 };
 
-const weekdays = '일월화수목금토'.split('');
-const dateKey = (date: Date) => date.toLocaleDateString('sv-SE');
-const BOOKMARKS_PER_PAGE = 10;
-
-export function Dashboard({ bookmarks, onRemoveBookmark, onStudy }: Props) {
-  const [bookmarkPage, setBookmarkPage] = useState(1);
-  const bookmarkPageCount = Math.ceil(bookmarks.length / BOOKMARKS_PER_PAGE);
-  const visibleBookmarks = bookmarks.slice(
-    (bookmarkPage - 1) * BOOKMARKS_PER_PAGE,
-    bookmarkPage * BOOKMARKS_PER_PAGE,
-  );
-
-  useEffect(() => {
-    setBookmarkPage((page) => Math.min(page, Math.max(bookmarkPageCount, 1)));
-  }, [bookmarkPageCount]);
-
-  const today = new Date();
-  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-  const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  const progressByDate = readProgressByDate();
-  const completedDates = Object.entries(progressByDate)
-    .filter(([, progress]) => progress >= 10)
-    .map(([date]) => date);
-  const studiedCount = Object.values(progressByDate).reduce(
-    (total, progress) => total + progress,
-    0,
-  );
-  const days = Array.from({ length: monthEnd.getDate() }, (_, index) => index + 1);
-  const weeklyProgress = Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(today);
-    date.setDate(today.getDate() - (6 - index));
-
-    return {
-      date: dateKey(date),
-      label: weekdays[date.getDay()],
-      progress: progressByDate[dateKey(date)] || 0,
-    };
-  });
-  const maxWeeklyProgress = Math.max(...weeklyProgress.map((day) => day.progress), 1);
-  const todayStudied = progressByDate[dateKey(today)] || 0;
-  const streak = (() => {
-    let count = 0;
-    const date = new Date(today);
-
-    while (progressByDate[dateKey(date)]) {
-      count += 1;
-      date.setDate(date.getDate() - 1);
-    }
-
-    return count;
-  })();
+export function Dashboard({
+  bookmarks,
+  selectedLevel,
+  resumeAvailable,
+  levelSummaries,
+  onRemoveBookmark,
+  onStudy,
+  onSelectLevel,
+}: Props) {
+  const activity = useDashboardActivity(selectedLevel);
 
   return (
     <section>
       <div className="page-heading">
-        <div>
-          <p className="eyebrow">KOTOBA DAILY</p>
-          <h1>오늘의 일본어</h1>
-        </div>
+        <p className="eyebrow">MY LEARNING</p>
+        <h1>학습 현황</h1>
       </div>
-
-      {studiedCount ? (
-        <>
-          <section className={styles['study-start']}>
-            <div>
-              <b>오늘 {todayStudied}개를 학습했어요.</b>
-              <span>하루 10단어, 부담 없이 이어가요.</span>
-            </div>
-            <button className={`${styles.primary} button-primary`} type="button" onClick={onStudy}>
-              공부하러 가기
-            </button>
-          </section>
-
-          <div className={styles.stats}>
-            <article>
-              <b>{todayStudied}</b>
-              <span>오늘 학습한 단어</span>
-            </article>
-            <article>
-              <b>{streak}</b>
-              <span>이어진 학습일</span>
-            </article>
-            <article>
-              <b>{studiedCount}</b>
-              <span>전체 학습한 단어</span>
-            </article>
-          </div>
-
-          <section className={styles['activity-calendar']} aria-label="이번 달 학습 달력">
-            <h2>
-              {today.getFullYear()}년 {today.getMonth() + 1}월
-            </h2>
-            <div className={styles['weekday-labels']} aria-hidden="true">
-              {weekdays.map((weekday) => (
-                <span key={weekday}>{weekday}</span>
-              ))}
-            </div>
-            <div className={styles['calendar-days']}>
-              {Array.from({ length: monthStart.getDay() }, (_, index) => (
-                <i key={`empty-${index}`} />
-              ))}
-              {days.map((number) => {
-                const date = new Date(today.getFullYear(), today.getMonth(), number);
-                const key = dateKey(date);
-                const complete = completedDates.includes(key);
-                const isToday = key === dateKey(today);
-
-                return (
-                  <span
-                    key={key}
-                    className={`${complete ? styles.studied : ''} ${isToday ? styles['calendar-today'] : ''}`}
-                  >
-                    {number}
-                    {complete && <b aria-label="학습 완료">★</b>}
-                  </span>
-                );
-              })}
-            </div>
-          </section>
-
-          <section className={styles['weekly-chart']} aria-label="최근 7일 학습량">
-            <div className={styles['weekly-chart-head']}>
-              <h2>이번 주 학습</h2>
-              <span>학습한 단어</span>
-            </div>
-            <div className={styles['chart-columns']}>
-              {weeklyProgress.map((day) => (
-                <div key={day.date} className={styles['chart-column']}>
-                  <span className={styles['chart-value']}>{day.progress || ''}</span>
-                  <div className={styles['chart-track']}>
-                    <i
-                      className={styles['chart-bar']}
-                      style={{ height: `${(day.progress / maxWeeklyProgress) * 100}%` }}
-                    />
-                  </div>
-                  <span className={styles['chart-day']}>{day.label}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        </>
-      ) : (
-        <section className={styles.onboarding}>
-          <p className="eyebrow">FIRST STEP</p>
-          <h2>오늘의 첫 10단어를 시작해 볼까요?</h2>
-          <p>뜻을 적고, 사전 뜻을 확인한 뒤, 헷갈리는 단어만 단어장에 남겨요.</p>
-          <button className={`${styles.primary} button-primary`} type="button" onClick={onStudy}>
-            첫 학습 시작하기
-          </button>
-        </section>
+      <LearningLevelSelector
+        selectedLevel={selectedLevel}
+        resumeAvailable={resumeAvailable}
+        studiedCount={activity.studiedCount}
+        todayStudied={activity.todayStudied}
+        levelSummaries={levelSummaries}
+        onStudy={onStudy}
+        onSelectLevel={onSelectLevel}
+      />
+      {activity.activityAvailable && (
+        <LearningActivity selectedLevel={selectedLevel} activity={activity} />
       )}
-
-      {bookmarks.length > 0 && (
-        <section className={styles.bookmarks}>
-          <div className={styles['bookmarks-heading']}>
-            <div>
-              <p className="eyebrow">WORD LIST</p>
-              <h2>단어장</h2>
-            </div>
-            <b>{bookmarks.length}</b>
-          </div>
-          <div className={styles['bookmark-list']}>
-            {visibleBookmarks.map((word) => (
-              <article key={word.id} className={styles['bookmark-item']}>
-                <div>
-                  <strong>
-                    <Furigana expression={word.jp} reading={word.reading} />
-                  </strong>
-                  <p>{word.meaningKo}</p>
-                </div>
-                <div className={styles['bookmark-actions']}>
-                  <a
-                    className={`${styles['icon-button']} tooltip`}
-                    href={`https://jisho.org/search/${encodeURIComponent(word.jp)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="사전에서 자세히 보기"
-                    data-tooltip="사전에서 자세히 보기"
-                  >
-                    <BookOpen size={17} aria-hidden="true" />
-                  </a>
-                  <button
-                    className={`${styles['icon-button']} tooltip`}
-                    type="button"
-                    onClick={() => onRemoveBookmark(word.id)}
-                    aria-label="단어장 저장 해제"
-                    data-tooltip="단어장 저장 해제"
-                  >
-                    <BookmarkMinus size={17} aria-hidden="true" />
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-          {bookmarkPageCount > 1 && (
-            <nav className={styles.pagination} aria-label="단어장 페이지 이동">
-              <button
-                className={`${styles['page-button']} tooltip`}
-                type="button"
-                onClick={() => setBookmarkPage((page) => page - 1)}
-                disabled={bookmarkPage === 1}
-                aria-label="이전 페이지"
-                data-tooltip="이전 페이지"
-              >
-                <ChevronLeft size={18} aria-hidden="true" />
-              </button>
-              {Array.from({ length: bookmarkPageCount }, (_, index) => index + 1).map((page) => (
-                <button
-                  key={page}
-                  className={styles['page-button']}
-                  type="button"
-                  onClick={() => setBookmarkPage(page)}
-                  aria-current={bookmarkPage === page ? 'page' : undefined}
-                >
-                  {page}
-                </button>
-              ))}
-              <button
-                className={`${styles['page-button']} tooltip`}
-                type="button"
-                onClick={() => setBookmarkPage((page) => page + 1)}
-                disabled={bookmarkPage === bookmarkPageCount}
-                aria-label="다음 페이지"
-                data-tooltip="다음 페이지"
-              >
-                <ChevronRight size={18} aria-hidden="true" />
-              </button>
-            </nav>
-          )}
-        </section>
-      )}
+      <BookmarkList bookmarks={bookmarks} onRemoveBookmark={onRemoveBookmark} />
     </section>
   );
 }

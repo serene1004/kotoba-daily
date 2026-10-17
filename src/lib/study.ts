@@ -20,30 +20,50 @@ export const writeStorage = (key: string, value: unknown) => {
   }
 };
 
-export const readProgressByDate = () => {
-  const studiedByDate: Record<string, number> = {};
-  const progressByDate: Record<string, number> = {};
+export const readProgressByDate = (level?: 'N5' | 'N4' | 'N3') => {
+  const studiedByLevelDate = new Map<string, { level: string; date: string; count: number; namespaced: boolean }>();
+  const progressByLevelDate = new Map<string, { level: string; date: string; count: number; namespaced: boolean }>();
 
   for (let index = 0; index < localStorage.length; index += 1) {
     const key = localStorage.key(index);
-    if (key) {
-      const namespaced = key.startsWith(STORAGE_PREFIX);
-      const appKey = namespaced ? key.slice(STORAGE_PREFIX.length) : key;
-      if (appKey.startsWith('studied:')) {
-        const date = appKey.replace('studied:', '');
-        if (studiedByDate[date] === undefined || namespaced) {
-          studiedByDate[date] = Number(localStorage.getItem(key)) || 0;
-        }
-      } else if (appKey.startsWith('progress:')) {
-        const date = appKey.replace('progress:', '');
-        if (progressByDate[date] === undefined || namespaced) {
-          progressByDate[date] = Number(localStorage.getItem(key)) || 0;
-        }
-      }
+    if (!key) continue;
+
+    const namespaced = key.startsWith(STORAGE_PREFIX);
+    const appKey = namespaced ? key.slice(STORAGE_PREFIX.length) : key;
+    const [kind, maybeLevel, maybeDate] = appKey.split(':');
+    if (kind !== 'studied' && kind !== 'progress') continue;
+
+    const hasLevel = maybeLevel === 'N5' || maybeLevel === 'N4' || maybeLevel === 'N3';
+    const itemLevel = hasLevel ? maybeLevel : 'N5';
+    const date = hasLevel ? maybeDate : maybeLevel;
+    if (!date) continue;
+
+    const entries = kind === 'studied' ? studiedByLevelDate : progressByLevelDate;
+    const itemKey = `${itemLevel}:${date}`;
+    const existing = entries.get(itemKey);
+    if (!existing || (namespaced && !existing.namespaced)) {
+      entries.set(itemKey, {
+        level: itemLevel,
+        date,
+        count: Number(localStorage.getItem(key)) || 0,
+        namespaced,
+      });
     }
   }
 
-  return { ...progressByDate, ...studiedByDate };
+  const result: Record<string, number> = {};
+  for (const entry of progressByLevelDate.values()) {
+    if (level && entry.level !== level) continue;
+    if (studiedByLevelDate.has(`${entry.level}:${entry.date}`)) continue;
+    result[entry.date] = (result[entry.date] || 0) + entry.count;
+  }
+  for (const entry of studiedByLevelDate.values()) {
+    if (!level || entry.level === level) {
+      result[entry.date] = (result[entry.date] || 0) + entry.count;
+    }
+  }
+
+  return result;
 };
 
 const shuffle = <T>(items: T[]) => {
