@@ -17,13 +17,17 @@
 
 ## 단어 데이터
 
-앱 실행 중 외부 CSV를 요청하지 않고 `public/data/n5.json`을 사용합니다. 원본 CSV를 갱신한 뒤에는 다음 명령으로 기본 JSON을 다시 만들 수 있습니다.
+앱 실행 중 외부 요청 없이 `public/data/n5.json`, `n4.json`, `n3.json`을 사용합니다. 레벨별 원본 CSV는 `src/n5.csv`, `src/n4.csv`, `src/n3.csv`이며, 아래처럼 앱용 JSON으로 변환할 수 있습니다.
 
 ```bash
 pnpm prepare:data -- src/n5.csv public/data/n5.json
+pnpm prepare:data -- src/n4.csv public/data/n4.json
+pnpm prepare:data -- src/n3.csv public/data/n3.json
 ```
 
-현재 `public/data/n5.json`에는 718개의 N5 단어가 한국어 뜻·품사·예문과 함께 포함되어 있습니다.
+현재 N5 718개, N4 666개, N3 2,139개 단어가 포함되어 있습니다. N4/N3 원본의 뜻은 영어이며, 읽는 법이 없는 행은 변환 시 제외합니다. JLPT 단어 목록은 공개된 커뮤니티 자료를 바탕으로 하므로 공식 출제 범위로 간주하지 마세요.
+
+N4/N3 원본은 [elzup/jlpt-word-list](https://github.com/elzup/jlpt-word-list)의 `src/n4.csv`, `src/n3.csv`에서 가져왔으며, 원본 저장소의 MIT 라이선스는 `LICENSE.jlpt-word-list`에 포함했습니다.
 
 전체 N5 데이터를 AI로 보강하려면 서버 키를 노출하지 않도록 로컬에서 다음을 실행합니다. 이 명령은 원본 CSV를 가져오고, OpenAI Responses API로 한국어 뜻·품사·예문을 만든 뒤, JSON Schema 검증을 통과한 경우에만 `public/data/n5.json`을 덮어씁니다.
 
@@ -31,6 +35,13 @@ pnpm prepare:data -- src/n5.csv public/data/n5.json
 Copy-Item .env.example .env.local
 # .env.local에 발급받은 키를 입력
 pnpm enrich:data
+```
+
+N4 또는 N3도 같은 방식으로 보강할 수 있습니다. API 사용 비용이 발생할 수 있습니다.
+
+```bash
+pnpm enrich:data -- N4
+pnpm enrich:data -- N3
 ```
 
 `OPENAI_MODEL`, `ENRICH_BATCH_SIZE`, `ENRICH_CONCURRENCY` 환경변수로 모델·배치 크기·동시 요청 수를 조정할 수 있습니다. API 키는 `.env.local`에만 저장하며 Git에 커밋하지 않습니다.
@@ -85,7 +96,7 @@ Docker 프런트엔드는 [http://localhost:9090](http://localhost:9090)에서 �
 | `pnpm build`        | 타입 검사와 프로덕션 빌드     |
 | `pnpm preview`      | 프로덕션 빌드 미리보기        |
 | `pnpm prepare:data` | CSV를 기본 JSON 형식으로 변환 |
-| `pnpm enrich:data`  | N5 전체 데이터를 AI로 보강    |
+| `pnpm enrich:data`  | 지정한 레벨의 단어 데이터를 AI로 보강 (기본 N5) |
 | `pnpm lint`         | ESLint 검사                   |
 | `pnpm format`       | Prettier로 전체 포맷          |
 | `pnpm format:check` | 포맷 적용 여부 검사           |
