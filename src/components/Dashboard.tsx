@@ -1,4 +1,3 @@
-import styles from './Dashboard.module.css';
 import type { Word } from '../types';
 import { useDashboardActivity } from '../hooks/useDashboardActivity';
 import { BookmarkList } from './dashboard/BookmarkList';
