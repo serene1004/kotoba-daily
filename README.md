@@ -86,9 +86,9 @@ Docker 프런트엔드는 [http://localhost:9090](http://localhost:9090)에서 �
 
 ## GitHub Pages
 
-`master` 브랜치에 푸시하면 GitHub Actions가 정적 사이트를 빌드해 배포합니다. 최초 배포 전에는 GitHub 저장소의 **Settings → Pages → Build and deployment**에서 Source를 **GitHub Actions**로 선택하세요.
+이 프로젝트는 GitHub Actions로 빌드하고 GitHub Pages로 배포합니다.
 
-배포 주소: [https://serene1004.github.io/kotoba-daily/](https://serene1004.github.io/kotoba-daily/)
+[현재 배포된 데모](https://serene1004.github.io/kotoba-daily/)
 
 ## 명령어
 
