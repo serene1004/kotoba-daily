@@ -15,3 +15,5 @@ export type WordProgress = {
   lastStudiedAt: string;
   nextReviewAt: string;
 };
+
+export type SessionDifficulty = 'hard' | 'okay' | 'easy';

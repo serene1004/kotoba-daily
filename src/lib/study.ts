@@ -81,7 +81,11 @@ export const addDays = (date: string, days: number) => {
   return next.toLocaleDateString('sv-SE');
 };
 
-export const reviewDelay = (correctCount: number) => [3, 7, 14][Math.min(correctCount - 1, 2)] || 1;
+export const reviewDelay = (correctCount: number, difficulty: 'hard' | 'okay' | 'easy' = 'okay') => {
+  if (difficulty === 'hard') return 1;
+  const intervals = difficulty === 'easy' ? [5, 10, 21] : [3, 7, 14];
+  return intervals[Math.min(correctCount - 1, 2)] || 1;
+};
 
 export const pickQuest = (
   words: Word[],

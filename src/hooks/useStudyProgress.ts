@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { Word, WordProgress } from '../types';
+import type { SessionDifficulty, Word, WordProgress } from '../types';
 import { addDays, pickQuest, readStorage, reviewDelay, writeStorage } from '../lib/study';
 
 const todayKey = () => new Date().toLocaleDateString('sv-SE');
@@ -33,6 +33,9 @@ export function useStudyProgress(words: Word[], level: string = 'N5') {
     readLevelStorage('studied', level, todayKey(), readLevelStorage('progress', level, todayKey(), 0)),
   );
   const [correctCount, setCorrectCount] = useState(() => readLevelStorage('correct', level, todayKey(), 0));
+  const [sessionAnswers, setSessionAnswers] = useState<Record<string, boolean>>({});
+  const [sessionDifficulty, setSessionDifficulty] = useState<SessionDifficulty | null>(null);
+  const sessionKey = `${questKey}:${quest.join(',')}`;
 
   useEffect(() => {
     const refreshDay = () => setDay((current) => (current === todayKey() ? current : todayKey()));
@@ -54,6 +57,11 @@ export function useStudyProgress(words: Word[], level: string = 'N5') {
     setStudied(readLevelStorage('studied', level, day, readLevelStorage('progress', level, day, 0)));
     setCorrectCount(readLevelStorage('correct', level, day, 0));
   }, [day, level]);
+
+  useEffect(() => {
+    setSessionAnswers(readStorage(`answers:${sessionKey}`, {}));
+    setSessionDifficulty(readStorage(`difficulty:${sessionKey}`, null));
+  }, [sessionKey]);
 
   useEffect(() => {
     if (quest.length || !words.length) return;
@@ -98,6 +106,11 @@ export function useStudyProgress(words: Word[], level: string = 'N5') {
 
   const recordAnswer = (correct: boolean) => {
     if (!word) return;
+    setSessionAnswers((current) => {
+      const next = { ...current, [word.id]: correct };
+      writeStorage(`answers:${sessionKey}`, next);
+      return next;
+    });
     if (correct) {
       setCorrectCount((current) => {
         const next = current + 1;
@@ -125,6 +138,25 @@ export function useStudyProgress(words: Word[], level: string = 'N5') {
       writeStorage('wordProgress', next);
       return next;
     });
+  };
+
+  const rateSessionDifficulty = (difficulty: SessionDifficulty) => {
+    const nextProgress = { ...progress };
+    Object.entries(sessionAnswers).forEach(([id, correct]) => {
+      const previous = nextProgress[id];
+      if (!previous) return;
+      nextProgress[id] = {
+        ...previous,
+        nextReviewAt: addDays(
+          day,
+          correct ? reviewDelay(previous.correctCount, difficulty) : 1,
+        ),
+      };
+    });
+    setProgress(nextProgress);
+    writeStorage('wordProgress', nextProgress);
+    setSessionDifficulty(difficulty);
+    writeStorage(`difficulty:${sessionKey}`, difficulty);
   };
 
   const toggleBookmark = () => {
@@ -160,11 +192,13 @@ export function useStudyProgress(words: Word[], level: string = 'N5') {
     bookmarks,
     levelSummaries,
     correctCount,
+    sessionDifficulty,
     index,
     quest,
     studied,
     word,
     recordAnswer,
+    rateSessionDifficulty,
     advance,
     toggleBookmark,
     removeBookmark,

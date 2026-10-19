@@ -9,6 +9,7 @@ import { Updates } from './components/Updates';
 import { useStudyProgress } from './hooks/useStudyProgress';
 import { useVocabulary } from './hooks/useVocabulary';
 import { readStorage, writeStorage } from './lib/study';
+import type { SessionDifficulty } from './types';
 
 type Theme = 'light' | 'dark';
 
@@ -34,8 +35,10 @@ function App() {
     index,
     levelSummaries,
     quest,
+    sessionDifficulty,
     word,
     recordAnswer,
+    rateSessionDifficulty,
     removeBookmark,
     startAnotherQuest,
     toggleBookmark,
@@ -115,6 +118,36 @@ function App() {
             <br />
             새로운 단어로 한 세트 더 학습할 수 있어요.
           </p>
+          <div className={styles['difficulty-rating']}>
+            <p>이번 학습은 어땠나요?</p>
+            {sessionDifficulty ? (
+              <span role="status">
+                {sessionDifficulty === 'hard'
+                  ? '이번 세트의 정답 단어를 내일 다시 복습할게요.'
+                  : sessionDifficulty === 'easy'
+                    ? '이번 세트의 정답 단어는 복습 간격을 늘렸어요.'
+                    : '현재 복습 간격을 유지할게요.'}
+              </span>
+            ) : (
+              <div role="group" aria-label="이번 학습 난이도 평가">
+                {(
+                  [
+                    ['hard', '어려웠어요'],
+                    ['okay', '적당했어요'],
+                    ['easy', '쉬웠어요'],
+                  ] as [SessionDifficulty, string][]
+                ).map(([difficulty, label]) => (
+                  <button
+                    key={difficulty}
+                    type="button"
+                    onClick={() => rateSessionDifficulty(difficulty)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <div className={styles['complete-actions']}>
             <button className={styles.secondary} type="button" onClick={() => navigate('/')}>
               대시보드로 가기
