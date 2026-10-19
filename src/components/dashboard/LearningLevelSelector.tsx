@@ -2,22 +2,26 @@ import styles from '../Dashboard.module.css';
 
 type Props = {
   selectedLevel: 'N5' | 'N4' | 'N3';
+  sessionSize: 5 | 10;
   resumeAvailable: boolean;
   studiedCount: number;
   todayStudied: number;
   levelSummaries: { level: 'N5' | 'N4' | 'N3'; total: number; learned: number; dueReviews: number }[];
   onStudy: () => void;
   onSelectLevel: (level: 'N5' | 'N4' | 'N3') => void;
+  onSelectSessionSize: (size: 5 | 10) => void;
 };
 
 export function LearningLevelSelector({
   selectedLevel,
+  sessionSize,
   resumeAvailable,
   studiedCount,
   todayStudied,
   levelSummaries,
   onStudy,
   onSelectLevel,
+  onSelectSessionSize,
 }: Props) {
   const selectedLevelAvailable = levelSummaries.some(
     (summary) => summary.level === selectedLevel && summary.total > 0,
@@ -70,6 +74,20 @@ export function LearningLevelSelector({
             </article>
           );
         })}
+      </div>
+      <div className={styles['session-size']} role="group" aria-label="세트당 학습 단어 수">
+        <span>한 세트 학습량</span>
+        {([5, 10] as const).map((size) => (
+          <button
+            key={size}
+            className={sessionSize === size ? styles['session-size-selected'] : undefined}
+            type="button"
+            aria-pressed={sessionSize === size}
+            onClick={() => onSelectSessionSize(size)}
+          >
+            {size}개
+          </button>
+        ))}
       </div>
       <button
         className={`${styles.primary} button-primary`}

@@ -6,7 +6,7 @@ const todayKey = () => new Date().toLocaleDateString('sv-SE');
 const readLevelStorage = <T>(key: string, level: string, day: string, fallback: T) =>
   readStorage(`${key}:${level}:${day}`, level === 'N5' ? readStorage(`${key}:${day}`, fallback) : fallback);
 
-export function useStudyProgress(words: Word[], level: string = 'N5') {
+export function useStudyProgress(words: Word[], level: string = 'N5', sessionSize = 10) {
   const studyWords = useMemo(() => words.filter((word) => word.jlptLevel === level), [level, words]);
   const [day, setDay] = useState(todayKey);
   const [known, setKnown] = useState<string[]>(() => readStorage('known', []));
@@ -25,6 +25,9 @@ export function useStudyProgress(words: Word[], level: string = 'N5') {
   );
   const questKey = `${level}:${day}`;
   const [quest, setQuest] = useState<string[]>(() => readLevelStorage('quest', level, todayKey(), []));
+  const [currentQuestSize, setCurrentQuestSize] = useState(() =>
+    readLevelStorage('questSize', level, todayKey(), 10),
+  );
   const [seen, setSeen] = useState<string[]>(() =>
     readLevelStorage('seen', level, todayKey(), readLevelStorage('quest', level, todayKey(), [])),
   );
@@ -52,6 +55,7 @@ export function useStudyProgress(words: Word[], level: string = 'N5') {
 
   useEffect(() => {
     setQuest(readLevelStorage('quest', level, day, []));
+    setCurrentQuestSize(readLevelStorage('questSize', level, day, 10));
     setSeen(readLevelStorage('seen', level, day, readLevelStorage('quest', level, day, [])));
     setIndex(readLevelStorage('progress', level, day, 0));
     setStudied(readLevelStorage('studied', level, day, readLevelStorage('progress', level, day, 0)));
@@ -65,13 +69,15 @@ export function useStudyProgress(words: Word[], level: string = 'N5') {
 
   useEffect(() => {
     if (quest.length || !words.length) return;
-    const nextQuest = pickQuest(studyWords, known, progress, seen, day);
+    const nextQuest = pickQuest(studyWords, known, progress, seen, day, sessionSize);
     const nextSeen = [...new Set([...seen, ...nextQuest])];
     setQuest(nextQuest);
+    setCurrentQuestSize(sessionSize);
     setSeen(nextSeen);
     writeStorage(`quest:${questKey}`, nextQuest);
+    writeStorage(`questSize:${questKey}`, sessionSize);
     writeStorage(`seen:${questKey}`, nextSeen);
-  }, [day, known, progress, quest.length, seen, studyWords]);
+  }, [day, known, progress, quest.length, seen, sessionSize, studyWords]);
 
   const bookmarks = useMemo(
     () => words.filter((word) => bookmarkIds.includes(word.id)),
@@ -175,16 +181,33 @@ export function useStudyProgress(words: Word[], level: string = 'N5') {
   };
 
   const startAnotherQuest = () => {
-    const nextQuest = pickQuest(studyWords, known, progress, seen, day);
+    const nextQuest = pickQuest(studyWords, known, progress, seen, day, sessionSize);
     if (!nextQuest.length) return;
     const nextSeen = [...new Set([...seen, ...nextQuest])];
     setQuest(nextQuest);
+    setCurrentQuestSize(sessionSize);
     setSeen(nextSeen);
     setIndex(0);
     setCorrectCount(0);
     writeStorage(`quest:${questKey}`, nextQuest);
+    writeStorage(`questSize:${questKey}`, sessionSize);
     writeStorage(`seen:${questKey}`, nextSeen);
     writeStorage(`progress:${questKey}`, 0);
+    writeStorage(`correct:${questKey}`, 0);
+  };
+
+  const restartUnstartedQuest = () => {
+    const previousSeen = seen.filter((id) => !quest.includes(id));
+    const nextQuest = pickQuest(studyWords, known, progress, previousSeen, day, sessionSize);
+    if (!nextQuest.length) return;
+    const nextSeen = [...new Set([...previousSeen, ...nextQuest])];
+    setQuest(nextQuest);
+    setCurrentQuestSize(sessionSize);
+    setSeen(nextSeen);
+    setCorrectCount(0);
+    writeStorage(`quest:${questKey}`, nextQuest);
+    writeStorage(`questSize:${questKey}`, sessionSize);
+    writeStorage(`seen:${questKey}`, nextSeen);
     writeStorage(`correct:${questKey}`, 0);
   };
 
@@ -195,6 +218,7 @@ export function useStudyProgress(words: Word[], level: string = 'N5') {
     sessionDifficulty,
     index,
     quest,
+    currentQuestSize,
     studied,
     word,
     recordAnswer,
@@ -203,5 +227,6 @@ export function useStudyProgress(words: Word[], level: string = 'N5') {
     toggleBookmark,
     removeBookmark,
     startAnotherQuest,
+    restartUnstartedQuest,
   };
 }

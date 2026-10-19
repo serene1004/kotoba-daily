@@ -21,6 +21,10 @@ function App() {
     return saved === 'N4' || saved === 'N3' ? saved : 'N5';
   });
   const [studyStarted, setStudyStarted] = useState(false);
+  const [sessionSize, setSessionSize] = useState<5 | 10>(() => {
+    const saved = readStorage<number>('studySetSize', 10);
+    return saved === 5 ? 5 : 10;
+  });
   const { words, loading, failedLevels } = useVocabulary();
   const [theme, setTheme] = useState<Theme>(() => {
     const savedTheme = readStorage<string>('theme', '');
@@ -32,6 +36,7 @@ function App() {
     advance,
     bookmarks,
     correctCount,
+    currentQuestSize,
     index,
     levelSummaries,
     quest,
@@ -40,9 +45,10 @@ function App() {
     recordAnswer,
     rateSessionDifficulty,
     removeBookmark,
+    restartUnstartedQuest,
     startAnotherQuest,
     toggleBookmark,
-  } = useStudyProgress(words, level);
+  } = useStudyProgress(words, level, sessionSize);
   const isActiveStudy =
     location.pathname === '/study' && studyStarted && quest.length > 0 && index < quest.length;
   const blocker = useBlocker(isActiveStudy);
@@ -53,9 +59,14 @@ function App() {
   }, [theme]);
 
   useEffect(() => writeStorage('studyLevel', level), [level]);
+  useEffect(() => writeStorage('studySetSize', sessionSize), [sessionSize]);
 
   const startStudy = () => {
-    if (quest.length > 0 && index >= quest.length) startAnotherQuest();
+    if (quest.length > 0 && index >= quest.length) {
+      startAnotherQuest();
+    } else if (quest.length > 0 && index === 0 && currentQuestSize !== sessionSize) {
+      restartUnstartedQuest();
+    }
     setStudyStarted(true);
     navigate('/study');
   };
@@ -217,11 +228,13 @@ function App() {
             <Dashboard
               bookmarks={bookmarks}
               selectedLevel={level}
+              sessionSize={sessionSize}
               resumeAvailable={index > 0 && index < quest.length}
               levelSummaries={levelSummaries}
               onRemoveBookmark={removeBookmark}
               onStudy={startStudy}
               onSelectLevel={selectStudyLevel}
+              onSelectSessionSize={setSessionSize}
             />
           }
         />

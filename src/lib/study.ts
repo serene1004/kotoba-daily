@@ -93,6 +93,7 @@ export const pickQuest = (
   progress: Record<string, WordProgress>,
   seen: string[],
   day: string,
+  limit = 10,
 ) => {
   const knownIds = new Set(known);
   const reviewSet = new Set(
@@ -119,5 +120,5 @@ export const pickQuest = (
     ),
   );
 
-  return [...reviews, ...fresh, ...fallback].slice(0, 10).map((word) => word.id);
+  return [...reviews, ...fresh, ...fallback].slice(0, limit).map((word) => word.id);
 };
