@@ -38,6 +38,25 @@ export function StudySession({
   }
 
   const isLast = progress === total - 1;
+  const reportParams = new URLSearchParams({
+    title: `단어 정보 제안: ${word.jp} (${word.reading})`,
+    body: [
+      '## 단어 정보 제안',
+      '',
+      `- JLPT 레벨: ${word.jlptLevel ?? '미분류'}`,
+      `- 단어: ${word.jp}`,
+      `- 읽기: ${word.reading}`,
+      `- 현재 뜻: ${word.meaningKo}`,
+      `- 품사: ${word.partOfSpeech ?? '미입력'}`,
+      `- 현재 예문: ${word.example?.japanese ?? '미입력'}`,
+      `- 현재 예문 뜻: ${word.example?.korean ?? '미입력'}`,
+      '',
+      '## 제안할 내용',
+      '',
+      '오류 유형과 수정 제안을 적어 주세요.',
+    ].join('\n'),
+  });
+  const reportUrl = `https://github.com/serene1004/kotoba-daily/issues/new?${reportParams}`;
 
   const moveNext = (action: () => void) => {
     setAnswer('');
@@ -143,6 +162,14 @@ export function StudySession({
                         rel="noreferrer"
                       >
                         사전 보기 ↗
+                      </a>
+                      <a
+                        className={styles['dictionary-link']}
+                        href={reportUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        정보 수정 제안 ↗
                       </a>
                     </div>
                   </div>
