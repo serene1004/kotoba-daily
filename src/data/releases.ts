@@ -7,6 +7,15 @@ export type Release = {
 
 export const releases: Release[] = [
   {
+    version: '0.3.1',
+    date: '2026.11.03',
+    title: '후리가나를 더 정확하게 표시해요',
+    changes: [
+      '한자 앞뒤의 히라가나는 본문에 남기고, 한자에 해당하는 읽기만 후리가나로 표시해요.',
+      '세미콜론으로 나열된 표기와 읽기를 대응 관계에 맞춰 표시해요.',
+    ],
+  },
+  {
     version: '0.3.0',
     date: '2026.10.19',
     title: '내 학습 속도에 맞춰 복습해요',

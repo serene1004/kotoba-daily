@@ -89,7 +89,7 @@ Docker 프런트엔드는 [http://localhost:9090](http://localhost:9090)에서 �
 
 이 프로젝트는 GitHub Actions로 빌드하고 GitHub Pages로 배포합니다.
 
-[현재 배포된 데모](https://serene1004.github.io/kotoba-daily/)
+[https://serene1004.dev/kotoba-daily/](https://serene1004.github.io/kotoba-daily/)
 
 ## 명령어
 
