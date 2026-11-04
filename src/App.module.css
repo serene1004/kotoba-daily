@@ -24,14 +24,9 @@
   text-decoration: none;
 }
 .logo-mark {
-  width: var(--space-9);
-  height: var(--space-9);
-}
-.logo small {
-  margin-left: var(--space-1);
-  font-family: 'Gowun Dodum', sans-serif;
-  font-size: 0.48em;
-  font-weight: 700;
+  display: block;
+  width: clamp(104px, 32vw, 144px);
+  height: auto;
 }
 .theme-toggle {
   display: grid;

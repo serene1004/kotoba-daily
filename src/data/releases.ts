@@ -7,6 +7,12 @@ export type Release = {
 
 export const releases: Release[] = [
   {
+    version: '0.3.2',
+    date: '2026.11.04',
+    title: '새 로고와 파비콘을 적용했어요',
+    changes: ['앱 헤더와 브라우저·모바일 아이콘에 새로운 브랜드 이미지를 적용했어요.'],
+  },
+  {
     version: '0.3.1',
     date: '2026.11.03',
     title: '후리가나를 더 정확하게 표시해요',

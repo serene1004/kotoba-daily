@@ -192,12 +192,9 @@ function App() {
         <Link className={styles.logo} to="/">
           <img
             className={styles['logo-mark']}
-            src={`${import.meta.env.BASE_URL}favicon.svg`}
-            alt=""
+            src={`${import.meta.env.BASE_URL}logo-header-${theme}.png`}
+            alt="ことば Kotoba Daily"
           />
-          <span>
-            ことば <small>デイリー</small>
-          </span>
         </Link>
         <div className={styles['header-actions']}>
           <button
