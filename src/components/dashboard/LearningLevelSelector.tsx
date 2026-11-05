@@ -6,7 +6,12 @@ type Props = {
   resumeAvailable: boolean;
   studiedCount: number;
   todayStudied: number;
-  levelSummaries: { level: 'N5' | 'N4' | 'N3'; total: number; learned: number; dueReviews: number }[];
+  levelSummaries: {
+    level: 'N5' | 'N4' | 'N3';
+    total: number;
+    learned: number;
+    dueReviews: number;
+  }[];
   onStudy: () => void;
   onSelectLevel: (level: 'N5' | 'N4' | 'N3') => void;
   onSelectSessionSize: (size: 5 | 10) => void;
@@ -30,7 +35,7 @@ export function LearningLevelSelector({
   return (
     <section className={styles.learning} aria-labelledby="learning-title">
       <div className={styles['learning-heading']}>
-        <p className="eyebrow">{studiedCount ? 'MY LEARNING' : 'FIRST STEP'}</p>
+        <p className="eyebrow">JLPT VOCABULARY</p>
         <h2 id="learning-title">공부할 레벨을 선택해요</h2>
         <p>
           {studiedCount && todayStudied

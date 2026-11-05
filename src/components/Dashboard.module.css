@@ -6,6 +6,23 @@
   background: #fffdf9;
   box-shadow: 0 18px 45px #c9856c14;
 }
+.studyModes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+.studyModes .learning {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+.studyModes .learning > .primary {
+  margin: auto 0 0 auto;
+}
+.studyModes .session-size {
+  margin-bottom: var(--space-4);
+}
 .learning-heading {
   margin-bottom: var(--space-6);
 }
@@ -26,8 +43,47 @@
   display: block;
   margin: var(--space-5) 0 0 auto;
 }
+.learning > a.primary {
+  display: flex;
+  width: fit-content;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4) var(--space-7);
+  text-decoration: none;
+}
 .level-list {
   border-top: 1px solid var(--border);
+}
+.level-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+.level-option {
+  min-width: 58px;
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-weight: 700;
+}
+.level-option:hover:not(:disabled),
+.level-option.level-selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+.level-option:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.level-option:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 .level-row {
   display: grid;
@@ -37,7 +93,9 @@
   min-height: 70px;
   padding: 0 var(--space-3);
   border-bottom: 1px solid var(--border);
-  border-radius: var(--space-3);
+}
+.level-progress-row {
+  grid-template-columns: minmax(180px, 1fr) minmax(160px, 2fr) auto;
 }
 .level-name strong,
 .level-name span {
@@ -215,15 +273,25 @@
 .calendar-today {
   border: 2px solid #e47760;
 }
-.activity-none { background: transparent; }
-.activity-low { background: #fff0e8; }
-.activity-medium { background: #ffd8c8; }
-.activity-high { background: #f8c6b5; }
+.activity-none {
+  background: transparent;
+}
+.activity-low {
+  background: #fff0e8;
+}
+.activity-medium {
+  background: #ffd8c8;
+}
+.activity-high {
+  background: #f8c6b5;
+}
 .studied {
   color: #cf624e;
   font-weight: 700;
 }
-.activity-high.studied { color: #7a392d; }
+.activity-high.studied {
+  color: #7a392d;
+}
 .studied b {
   position: absolute;
   top: 3px;
@@ -313,7 +381,7 @@
   font-size: var(--font-size-xs);
 }
 .bookmarks {
-  margin-top: var(--space-5);
+  margin-top: 0;
   padding: var(--space-8);
   border: 1px solid #f1ddd1;
   border-radius: var(--space-7);
@@ -338,6 +406,14 @@
 .bookmark-list {
   display: grid;
   gap: var(--space-3);
+}
+.bookmark-empty {
+  margin: 0;
+  padding: var(--space-7);
+  border-radius: var(--space-5);
+  background: var(--paper);
+  color: var(--muted);
+  text-align: center;
 }
 .pagination {
   display: flex;
@@ -420,6 +496,12 @@
   .primary {
     width: 100%;
   }
+  .studyModes .learning > a.primary {
+    width: 100%;
+  }
+  .studyModes .learning > .primary {
+    margin: var(--space-5) 0 0;
+  }
   .stats {
     grid-template-columns: 1fr;
   }
@@ -458,6 +540,22 @@
     grid-column: 1;
     grid-row: 3;
   }
+  .level-progress-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .level-progress-row .level-track {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .level-progress-row .level-name {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .level-progress-row .review-due,
+  .level-progress-row .review-clear {
+    grid-column: 2;
+    grid-row: 1;
+  }
   .bookmark-item {
     flex-direction: column;
     align-items: flex-start;
@@ -492,10 +590,18 @@
 :global([data-theme='dark']) .studied {
   color: var(--accent);
 }
-:global([data-theme='dark']) .activity-low { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); }
-:global([data-theme='dark']) .activity-medium { background: color-mix(in srgb, var(--accent) 45%, var(--surface)); }
-:global([data-theme='dark']) .activity-high { background: color-mix(in srgb, var(--accent) 42%, var(--surface)); }
-:global([data-theme='dark']) .activity-high.studied { color: var(--ink); }
+:global([data-theme='dark']) .activity-low {
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface));
+}
+:global([data-theme='dark']) .activity-medium {
+  background: color-mix(in srgb, var(--accent) 45%, var(--surface));
+}
+:global([data-theme='dark']) .activity-high {
+  background: color-mix(in srgb, var(--accent) 42%, var(--surface));
+}
+:global([data-theme='dark']) .activity-high.studied {
+  color: var(--ink);
+}
 :global([data-theme='dark']) .activity-toolbar button {
   border-color: var(--border);
   background: var(--surface);
