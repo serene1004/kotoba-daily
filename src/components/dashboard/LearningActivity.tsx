@@ -46,11 +46,24 @@ export function LearningActivity({ selectedLevel, activity }: Props) {
         </div>
       </div>
       <div className={styles.stats}>
-        <article><b>{todayStudied}</b><span>오늘 단어 학습 횟수</span></article>
-        <article><b>{streak}</b><span>이어진 학습일</span></article>
-        <article><b>{studiedCount}</b><span>누적 단어 학습 횟수</span></article>
+        <article>
+          <b>{todayStudied}</b>
+          <span>오늘 단어 학습 횟수</span>
+        </article>
+        <article>
+          <b>{streak}</b>
+          <span>이어진 학습일</span>
+        </article>
+        <article>
+          <b>{studiedCount}</b>
+          <span>누적 단어 학습 횟수</span>
+        </article>
       </div>
-      <ActivityCalendar today={today} progressByDate={progressByDate} completedDates={completedDates} />
+      <ActivityCalendar
+        today={today}
+        progressByDate={progressByDate}
+        completedDates={completedDates}
+      />
       <WeeklyActivityChart days={weeklyProgress} weeklyCount={weeklyCount} />
     </>
   );

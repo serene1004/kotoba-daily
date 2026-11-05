@@ -10,11 +10,18 @@ export function WeeklyActivityChart({ days, weeklyCount }: Props) {
     <section className={styles['weekly-chart']} aria-label="최근 7일 학습량">
       <div className={styles['weekly-chart-head']}>
         <h2>최근 7일 학습</h2>
-        <span>{weeklyCount} / {WEEKLY_GOAL}회 · 하루 목표 {DAILY_GOAL}회</span>
+        <span>
+          {weeklyCount} / {WEEKLY_GOAL}회 · 하루 목표 {DAILY_GOAL}회
+        </span>
       </div>
       <div className={styles['chart-columns']}>
         {days.map((day) => (
-          <div key={day.date} className={styles['chart-column']} role="group" aria-label={`${day.date}, ${day.progress}회 학습`}>
+          <div
+            key={day.date}
+            className={styles['chart-column']}
+            role="group"
+            aria-label={`${day.date}, ${day.progress}회 학습`}
+          >
             <span className={styles['chart-value']}>{day.progress}</span>
             <div className={styles['chart-track']}>
               <i

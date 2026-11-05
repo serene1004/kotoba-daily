@@ -17,15 +17,15 @@
 
 ## 검증 명령
 
-| 범위 | 명령 | 비고 |
-|---|---|---|
-| 포맷 / 린트 | `pnpm format:check` / `pnpm lint` | 포맷 검사 범위는 스크립트 glob 기준 |
-| 타입 검사 | `pnpm build` | TypeScript 프로젝트 빌드와 Vite 프로덕션 빌드를 함께 수행 |
-| 단위 테스트 | 미확인 | `package.json`에 테스트 스크립트 없음 |
-| 통합 / E2E | 미확인 | `package.json`에 E2E 스크립트 없음 |
-| 빌드 | `pnpm build` | `DEPLOY_TARGET=github`는 GitHub Pages 경로 설정이 필요할 때 사용 |
-| 데이터 검사 | `pnpm check:data` | 단어 데이터 검증 |
-| 데이터 생성 | `pnpm prepare:data -- src/n5.csv public/data/n5.json` | N4/N3도 같은 형식으로 실행. 생성 대상 덮어쓰기를 확인 |
+| 범위        | 명령                                                  | 비고                                                             |
+| ----------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
+| 포맷 / 린트 | `pnpm format:check` / `pnpm lint`                     | 포맷 검사 범위는 스크립트 glob 기준                              |
+| 타입 검사   | `pnpm build`                                          | TypeScript 프로젝트 빌드와 Vite 프로덕션 빌드를 함께 수행        |
+| 단위 테스트 | 미확인                                                | `package.json`에 테스트 스크립트 없음                            |
+| 통합 / E2E  | 미확인                                                | `package.json`에 E2E 스크립트 없음                               |
+| 빌드        | `pnpm build`                                          | `DEPLOY_TARGET=github`는 GitHub Pages 경로 설정이 필요할 때 사용 |
+| 데이터 검사 | `pnpm check:data`                                     | 단어 데이터 검증                                                 |
+| 데이터 생성 | `pnpm prepare:data -- src/n5.csv public/data/n5.json` | N4/N3도 같은 형식으로 실행. 생성 대상 덮어쓰기를 확인            |
 
 ## 참고할 기존 예시
 

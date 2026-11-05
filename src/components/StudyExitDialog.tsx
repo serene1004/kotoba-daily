@@ -22,9 +22,8 @@ export function StudyExitDialog({ onContinue, onExit }: Props) {
       }
       if (event.key !== 'Tab') return;
 
-      const buttons = dialogRef.current?.querySelectorAll<HTMLButtonElement>(
-        'button:not(:disabled)',
-      );
+      const buttons =
+        dialogRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)');
       if (!buttons?.length) return;
 
       const first = buttons[0];
@@ -68,11 +67,7 @@ export function StudyExitDialog({ onContinue, onExit }: Props) {
           >
             계속 공부하기
           </button>
-          <button
-            className={`${appStyles.primary} button-primary`}
-            type="button"
-            onClick={onExit}
-          >
+          <button className={`${appStyles.primary} button-primary`} type="button" onClick={onExit}>
             나가기
           </button>
         </div>

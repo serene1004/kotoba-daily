@@ -180,7 +180,9 @@ if (!process.env.OPENAI_API_KEY) {
 
 const sourceResponse = await fetch(sourceUrl);
 if (!sourceResponse.ok) {
-  throw new Error(`JLPT source request failed: ${sourceResponse.status} ${sourceResponse.statusText}`);
+  throw new Error(
+    `JLPT source request failed: ${sourceResponse.status} ${sourceResponse.statusText}`,
+  );
 }
 const source = parseCsv(await sourceResponse.text());
 if (!source.length) {

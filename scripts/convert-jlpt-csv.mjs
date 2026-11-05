@@ -25,20 +25,20 @@ const splitCsvLine = (line) => {
   return [...cells, cell];
 };
 
-const words = rows.map((line) => {
-  const [jp, reading, meaningEn] = splitCsvLine(line).map((value) =>
-    value.trim(),
-  );
-  if (!jp || !reading || !meaningEn) return null;
-  return {
-    id: level === 'N5' ? `${jp}-${reading}` : `${level}-${jp}-${reading}`,
-    jp,
-    reading,
-    meaningKo: meaningEn,
-    meaningEn,
-    jlptLevel: level,
-  };
-}).filter(Boolean);
+const words = rows
+  .map((line) => {
+    const [jp, reading, meaningEn] = splitCsvLine(line).map((value) => value.trim());
+    if (!jp || !reading || !meaningEn) return null;
+    return {
+      id: level === 'N5' ? `${jp}-${reading}` : `${level}-${jp}-${reading}`,
+      jp,
+      reading,
+      meaningKo: meaningEn,
+      meaningEn,
+      jlptLevel: level,
+    };
+  })
+  .filter(Boolean);
 
 fs.mkdirSync(path.dirname(output), { recursive: true });
 fs.writeFileSync(output, `${JSON.stringify(words, null, 2)}\n`);

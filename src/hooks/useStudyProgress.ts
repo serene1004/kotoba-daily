@@ -4,10 +4,16 @@ import { addDays, pickQuest, readStorage, reviewDelay, writeStorage } from '../l
 
 const todayKey = () => new Date().toLocaleDateString('sv-SE');
 const readLevelStorage = <T>(key: string, level: string, day: string, fallback: T) =>
-  readStorage(`${key}:${level}:${day}`, level === 'N5' ? readStorage(`${key}:${day}`, fallback) : fallback);
+  readStorage(
+    `${key}:${level}:${day}`,
+    level === 'N5' ? readStorage(`${key}:${day}`, fallback) : fallback,
+  );
 
 export function useStudyProgress(words: Word[], level: string = 'N5', sessionSize = 10) {
-  const studyWords = useMemo(() => words.filter((word) => word.jlptLevel === level), [level, words]);
+  const studyWords = useMemo(
+    () => words.filter((word) => word.jlptLevel === level),
+    [level, words],
+  );
   const [day, setDay] = useState(todayKey);
   const [known, setKnown] = useState<string[]>(() => readStorage('known', []));
   const [bookmarkIds, setBookmarkIds] = useState<string[]>(() => {
@@ -24,7 +30,9 @@ export function useStudyProgress(words: Word[], level: string = 'N5', sessionSiz
     readStorage('wordProgress', {}),
   );
   const questKey = `${level}:${day}`;
-  const [quest, setQuest] = useState<string[]>(() => readLevelStorage('quest', level, todayKey(), []));
+  const [quest, setQuest] = useState<string[]>(() =>
+    readLevelStorage('quest', level, todayKey(), []),
+  );
   const [currentQuestSize, setCurrentQuestSize] = useState(() =>
     readLevelStorage('questSize', level, todayKey(), 10),
   );
@@ -33,9 +41,16 @@ export function useStudyProgress(words: Word[], level: string = 'N5', sessionSiz
   );
   const [index, setIndex] = useState(() => readLevelStorage('progress', level, todayKey(), 0));
   const [studied, setStudied] = useState(() =>
-    readLevelStorage('studied', level, todayKey(), readLevelStorage('progress', level, todayKey(), 0)),
+    readLevelStorage(
+      'studied',
+      level,
+      todayKey(),
+      readLevelStorage('progress', level, todayKey(), 0),
+    ),
   );
-  const [correctCount, setCorrectCount] = useState(() => readLevelStorage('correct', level, todayKey(), 0));
+  const [correctCount, setCorrectCount] = useState(() =>
+    readLevelStorage('correct', level, todayKey(), 0),
+  );
   const [sessionAnswers, setSessionAnswers] = useState<Record<string, boolean>>({});
   const [sessionDifficulty, setSessionDifficulty] = useState<SessionDifficulty | null>(null);
   const sessionKey = `${questKey}:${quest.join(',')}`;
@@ -58,7 +73,9 @@ export function useStudyProgress(words: Word[], level: string = 'N5', sessionSiz
     setCurrentQuestSize(readLevelStorage('questSize', level, day, 10));
     setSeen(readLevelStorage('seen', level, day, readLevelStorage('quest', level, day, [])));
     setIndex(readLevelStorage('progress', level, day, 0));
-    setStudied(readLevelStorage('studied', level, day, readLevelStorage('progress', level, day, 0)));
+    setStudied(
+      readLevelStorage('studied', level, day, readLevelStorage('progress', level, day, 0)),
+    );
     setCorrectCount(readLevelStorage('correct', level, day, 0));
   }, [day, level]);
 
@@ -90,8 +107,9 @@ export function useStudyProgress(words: Word[], level: string = 'N5', sessionSiz
         return {
           level: jlptLevel,
           total: levelWords.length,
-          learned: levelWords.filter(({ id }) => progress[id]?.correctCount || progress[id]?.wrongCount)
-            .length,
+          learned: levelWords.filter(
+            ({ id }) => progress[id]?.correctCount || progress[id]?.wrongCount,
+          ).length,
           dueReviews: levelWords.filter(
             ({ id }) => progress[id]?.nextReviewAt && progress[id].nextReviewAt <= day,
           ).length,
@@ -153,10 +171,7 @@ export function useStudyProgress(words: Word[], level: string = 'N5', sessionSiz
       if (!previous) return;
       nextProgress[id] = {
         ...previous,
-        nextReviewAt: addDays(
-          day,
-          correct ? reviewDelay(previous.correctCount, difficulty) : 1,
-        ),
+        nextReviewAt: addDays(day, correct ? reviewDelay(previous.correctCount, difficulty) : 1),
       };
     });
     setProgress(nextProgress);

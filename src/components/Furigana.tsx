@@ -1,6 +1,14 @@
 const kanjiPattern = /[\u3400-\u4dbf\u4e00-\u9fff々〆ヵヶ]/u;
 
-function FuriganaPart({ expression, reading, show }: { expression: string; reading: string; show: boolean }) {
+function FuriganaPart({
+  expression,
+  reading,
+  show,
+}: {
+  expression: string;
+  reading: string;
+  show: boolean;
+}) {
   if (!kanjiPattern.test(expression)) return <span>{expression}</span>;
 
   const prefix = expression.match(/^[ぁ-ゖー～〜]+/u)?.[0] ?? '';
