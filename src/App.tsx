@@ -6,6 +6,8 @@ import { Dashboard } from './components/Dashboard';
 import { StudySession } from './components/StudySession';
 import { StudyExitDialog } from './components/StudyExitDialog';
 import { Updates } from './components/Updates';
+import { KanaPage } from './components/KanaPage';
+import { ProgressPage } from './components/ProgressPage';
 import { useStudyProgress } from './hooks/useStudyProgress';
 import { useVocabulary } from './hooks/useVocabulary';
 import { readStorage, writeStorage } from './lib/study';
@@ -85,7 +87,9 @@ function App() {
         </section>
       ) : !words.some((word) => word.jlptLevel === level) ? (
         <section className={styles.complete}>
-          <h2>{failedLevels.includes(level) ? '단어를 불러오지 못했어요.' : '학습할 단어가 없어요.'}</h2>
+          <h2>
+            {failedLevels.includes(level) ? '단어를 불러오지 못했어요.' : '학습할 단어가 없어요.'}
+          </h2>
           <p>
             {failedLevels.includes(level)
               ? '잠시 후 페이지를 새로고침해 주세요.'
@@ -198,11 +202,20 @@ function App() {
         </Link>
         <div className={styles['header-actions']}>
           <button
-            className={styles.updates}
+            className={`${styles.updates} ${styles.modeToggle} ${location.pathname === '/progress' ? styles['current-page'] : ''}`}
             type="button"
-            onClick={() => navigate(location.pathname === '/updates' ? '/' : '/updates')}
+            aria-current={location.pathname === '/progress' ? 'page' : undefined}
+            onClick={() => navigate('/progress')}
           >
-            {location.pathname === '/updates' ? '홈으로 돌아가기' : 'RELEASE NOTES'}
+            학습 통계
+          </button>
+          <button
+            className={`${styles.updates} ${location.pathname === '/updates' ? styles['current-page'] : ''}`}
+            type="button"
+            aria-current={location.pathname === '/updates' ? 'page' : undefined}
+            onClick={() => navigate('/updates')}
+          >
+            RELEASE NOTES
           </button>
           <button
             className={styles['theme-toggle']}
@@ -236,13 +249,15 @@ function App() {
           }
         />
         <Route path="/study" element={study} />
+        <Route path="/kana" element={<KanaPage />} />
+        <Route
+          path="/progress"
+          element={<ProgressPage selectedLevel={level} levelSummaries={levelSummaries} />}
+        />
         <Route path="/updates" element={<Updates />} />
       </Routes>
       {blocker.state === 'blocked' && (
-        <StudyExitDialog
-          onContinue={() => blocker.reset?.()}
-          onExit={() => blocker.proceed?.()}
-        />
+        <StudyExitDialog onContinue={() => blocker.reset?.()} onExit={() => blocker.proceed?.()} />
       )}
     </main>
   );
