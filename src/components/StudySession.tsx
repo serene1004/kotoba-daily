@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Bookmark } from 'lucide-react';
 import { Furigana } from './Furigana';
 import styles from './StudySession.module.css';
@@ -28,6 +28,13 @@ export function StudySession({
   const [shown, setShown] = useState(false);
   const [skipped, setSkipped] = useState(false);
   const [showFurigana, setShowFurigana] = useState(() => readStorage('showFurigana', false));
+
+  useEffect(() => {
+    const pendingSkip = word ? readStorage(`pendingSkip:${word.id}`, false) : false;
+    setAnswer('');
+    setSkipped(pendingSkip);
+    setShown(pendingSkip);
+  }, [word?.id]);
 
   if (!word) {
     return (
@@ -59,6 +66,7 @@ export function StudySession({
   const reportUrl = `https://github.com/serene1004/kotoba-daily/issues/new?${reportParams}`;
 
   const moveNext = (action: () => void) => {
+    if (word) writeStorage(`pendingSkip:${word.id}`, false);
     setAnswer('');
     setShown(false);
     setSkipped(false);
@@ -77,6 +85,7 @@ export function StudySession({
     }
   };
   const skipAnswer = () => {
+    if (word) writeStorage(`pendingSkip:${word.id}`, true);
     onAnswer(false);
     setSkipped(true);
     setShown(true);
