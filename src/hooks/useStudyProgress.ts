@@ -107,9 +107,7 @@ export function useStudyProgress(words: Word[], level: string = 'N5', sessionSiz
         return {
           level: jlptLevel,
           total: levelWords.length,
-          learned: levelWords.filter(
-            ({ id }) => progress[id]?.correctCount || progress[id]?.wrongCount,
-          ).length,
+          learned: levelWords.filter(({ id }) => (progress[id]?.correctCount ?? 0) > 0).length,
           dueReviews: levelWords.filter(
             ({ id }) => progress[id]?.nextReviewAt && progress[id].nextReviewAt <= day,
           ).length,
