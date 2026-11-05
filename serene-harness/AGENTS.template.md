@@ -24,6 +24,13 @@
 4. DB·API 계약·빌드 설정을 바꿨다면 관련 생성, 타입 검사, 통합 경계를 추가로 확인합니다.
 5. 완료 전에 변경 diff를 다시 읽고 요청 누락, 불필요한 변경, 오류 처리와 회귀 위험을 점검합니다. 별도 리뷰 도구를 썼다면 그 결과와 자체 검토를 구분합니다.
 
+## 커밋 메시지
+
+- 커밋 메시지는 `type(scope): message` 형식을 기본으로 하되, scope는 변경 영역을 분명히 해줄 때만 붙입니다. 의미 있는 scope가 없으면 `type: message`를 씁니다.
+- 예: `fix(study): restore skipped word after reload`, `docs: clarify setup instructions`.
+- `type`은 `feat`, `fix`, `docs`, `refactor`, `test`, `chore` 등 변경 성격에 맞게 고르고, scope 이름은 영향 영역을 짧고 일관되게 나타냅니다.
+- 기존 커밋을 수정하거나 다시 쓰지 않습니다.
+
 ## 마무리
 
 - 변경 사항과 이유, 실행한 검사와 결과, 남은 위험을 아래 형식으로 보고합니다.
