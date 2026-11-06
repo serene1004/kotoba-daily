@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Moon, Sun } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Menu, Moon, Sun, X } from 'lucide-react';
 import { Link, Route, Routes, useBlocker, useLocation, useNavigate } from 'react-router-dom';
 import styles from './App.module.css';
 import { Dashboard } from './components/Dashboard';
@@ -18,6 +18,9 @@ type Theme = 'light' | 'dark';
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuToggleRef = useRef<HTMLButtonElement>(null);
   const [level, setLevel] = useState<'N5' | 'N4' | 'N3'>(() => {
     const saved = readStorage<string>('studyLevel', 'N5');
     return saved === 'N4' || saved === 'N3' ? saved : 'N5';
@@ -34,6 +37,36 @@ function App() {
     if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
+  useEffect(() => setMenuOpen(false), [location.pathname]);
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!(event.target instanceof Node)) return;
+      if (
+        menuRef.current?.contains(event.target) ||
+        menuToggleRef.current?.contains(event.target)
+      ) {
+        return;
+      }
+
+      setMenuOpen(false);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+
+      setMenuOpen(false);
+      menuToggleRef.current?.focus();
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [menuOpen]);
   const {
     advance,
     bookmarks,
@@ -214,34 +247,51 @@ function App() {
             alt="ことば Kotoba Daily"
           />
         </Link>
-        <div className={styles['header-actions']}>
-          <button
-            className={`${styles.updates} ${styles.modeToggle} ${location.pathname === '/progress' ? styles['current-page'] : ''}`}
-            type="button"
-            aria-current={location.pathname === '/progress' ? 'page' : undefined}
-            onClick={() => navigate('/progress')}
+        <div className={styles['header-controls']}>
+          <div
+            id="mobile-header-menu"
+            ref={menuRef}
+            className={`${styles['header-actions']} ${menuOpen ? styles['menu-open'] : ''}`}
           >
-            학습 통계
-          </button>
+            <button
+              className={`${styles.updates} ${styles.modeToggle} ${location.pathname === '/progress' ? styles['current-page'] : ''}`}
+              type="button"
+              aria-current={location.pathname === '/progress' ? 'page' : undefined}
+              onClick={() => navigate('/progress')}
+            >
+              학습 통계
+            </button>
+            <button
+              className={`${styles.updates} ${location.pathname === '/updates' ? styles['current-page'] : ''}`}
+              type="button"
+              aria-current={location.pathname === '/updates' ? 'page' : undefined}
+              onClick={() => navigate('/updates')}
+            >
+              RELEASE NOTES
+            </button>
+          </div>
           <button
-            className={`${styles.updates} ${location.pathname === '/updates' ? styles['current-page'] : ''}`}
-            type="button"
-            aria-current={location.pathname === '/updates' ? 'page' : undefined}
-            onClick={() => navigate('/updates')}
-          >
-            RELEASE NOTES
-          </button>
-          <button
-            className={styles['theme-toggle']}
+            className={`${styles['theme-toggle']} ${styles['header-control-button']}`}
             type="button"
             aria-label={theme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
             onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
           >
             {theme === 'dark' ? (
-              <Sun aria-hidden="true" size={18} strokeWidth={1.8} />
+              <Sun aria-hidden="true" size={20} strokeWidth={1.8} />
             ) : (
-              <Moon aria-hidden="true" size={18} strokeWidth={1.8} />
+              <Moon aria-hidden="true" size={20} strokeWidth={1.8} />
             )}
+          </button>
+          <button
+            className={`${styles['menu-toggle']} ${styles['header-control-button']}`}
+            ref={menuToggleRef}
+            type="button"
+            aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-header-menu"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? <X aria-hidden="true" size={20} /> : <Menu aria-hidden="true" size={20} />}
           </button>
         </div>
       </header>

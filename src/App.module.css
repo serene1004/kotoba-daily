@@ -4,6 +4,7 @@
   padding-bottom: var(--space-14);
 }
 .header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -40,6 +41,14 @@
   color: var(--accent-strong);
   font-size: var(--font-size-icon);
   line-height: 1;
+}
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.menu-toggle {
+  display: none;
 }
 .theme-toggle:hover {
   background: var(--accent-soft);
@@ -165,28 +174,75 @@
 
 @media (max-width: 560px) {
   .header {
-    height: auto;
-    min-height: 68px;
-    flex-wrap: wrap;
-    row-gap: 0;
+    justify-content: flex-start;
+    height: 64px;
+  }
+  .logo {
+    margin-right: auto;
+  }
+  .header-controls {
+    position: relative;
+    flex: 0 0 auto;
+  }
+  .menu-toggle {
+    display: grid;
   }
   .header-actions {
+    position: absolute;
+    z-index: 2;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    display: none;
+    width: max-content;
+    min-width: 152px;
+    max-width: calc(100vw - 32px);
+    padding: var(--space-2);
+    border: 1px solid var(--border);
+    border-radius: var(--space-4);
+    background: var(--surface);
+    box-shadow: 0 8px 24px rgb(61 52 50 / 12%);
+  }
+  .menu-open {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-1);
+  }
+  .updates,
+  .modeToggle {
     width: 100%;
-    justify-content: space-between;
-    padding: var(--space-2) 0;
+    min-height: 36px;
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    border-radius: var(--space-3);
+    background: transparent;
+    text-align: left;
+    font-size: var(--font-size-sm);
+    letter-spacing: 0;
+  }
+  .updates:hover,
+  .updates.current-page {
+    border-color: transparent;
+    background: var(--accent-soft);
+    box-shadow: none;
+  }
+  .header-control-button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--accent-strong);
+    line-height: 1;
   }
   .complete-actions {
     flex-direction: column-reverse;
   }
   .difficulty-rating > div {
     flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 380px) {
-  .header-actions {
-    flex-wrap: wrap;
-    justify-content: center;
-    row-gap: var(--space-2);
   }
 }
