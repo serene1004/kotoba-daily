@@ -5,6 +5,8 @@ import styles from './StudySession.module.css';
 import { readStorage, writeStorage } from '../lib/study';
 import type { Word } from '../types';
 
+const todayKey = () => new Date().toLocaleDateString('sv-SE');
+
 type Props = {
   word?: Word;
   progress: number;
@@ -28,13 +30,14 @@ export function StudySession({
   const [shown, setShown] = useState(false);
   const [skipped, setSkipped] = useState(false);
   const [showFurigana, setShowFurigana] = useState(() => readStorage('showFurigana', false));
+  const pendingSkipKey = word ? `pendingSkip:${word.id}:${todayKey()}` : '';
 
   useEffect(() => {
-    const pendingSkip = word ? readStorage(`pendingSkip:${word.id}`, false) : false;
+    const pendingSkip = pendingSkipKey ? readStorage(pendingSkipKey, false) : false;
     setAnswer('');
     setSkipped(pendingSkip);
     setShown(pendingSkip);
-  }, [word?.id]);
+  }, [pendingSkipKey]);
 
   if (!word) {
     return (
@@ -66,7 +69,7 @@ export function StudySession({
   const reportUrl = `https://github.com/serene1004/kotoba-daily/issues/new?${reportParams}`;
 
   const moveNext = (action: () => void) => {
-    if (word) writeStorage(`pendingSkip:${word.id}`, false);
+    if (pendingSkipKey) writeStorage(pendingSkipKey, false);
     setAnswer('');
     setShown(false);
     setSkipped(false);
@@ -85,7 +88,7 @@ export function StudySession({
     }
   };
   const skipAnswer = () => {
-    if (word) writeStorage(`pendingSkip:${word.id}`, true);
+    if (pendingSkipKey) writeStorage(pendingSkipKey, true);
     onAnswer(false);
     setSkipped(true);
     setShown(true);
