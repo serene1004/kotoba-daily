@@ -122,6 +122,20 @@ function App() {
             {level} 단어 공부 시작하기
           </button>
         </section>
+      ) : quest.length === 0 ? (
+        <section className={styles.complete}>
+          <h2>오늘 더 학습할 단어가 없어요.</h2>
+          <p>
+            {level}에서 오늘 학습할 수 있는 단어를 모두 확인했어요.
+            <br />
+            다른 레벨을 선택하거나 내일 다시 학습해 주세요.
+          </p>
+          <div className={styles['complete-actions']}>
+            <button className={styles.secondary} type="button" onClick={() => navigate('/')}>
+              대시보드로 가기
+            </button>
+          </div>
+        </section>
       ) : index >= quest.length && quest.length ? (
         <section className={styles.complete}>
           <h2>오늘의 학습을 마쳤어요.</h2>
