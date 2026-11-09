@@ -7,6 +7,15 @@ export type Release = {
 
 export const releases: Release[] = [
   {
+    version: '0.5.0',
+    date: '2026.11.09',
+    title: 'JLPT 사전과 북마크 복습을 추가했어요',
+    changes: [
+      'N3~N5 단어를 검색하고, 단어를 선택해 읽기·뜻·품사·예문을 자세히 볼 수 있어요.',
+      '저장한 북마크만 모아 무작위 순서로 복습할 수 있어요.',
+    ],
+  },
+  {
     version: '0.4.1',
     date: '2026.11.07',
     title: '학습 흐름을 더 안정적으로 개선했어요',
