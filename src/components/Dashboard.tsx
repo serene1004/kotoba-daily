@@ -17,6 +17,7 @@ type Props = {
     dueReviews: number;
   }[];
   onRemoveBookmark: (id: string) => void;
+  onToggleBookmark: (id: string) => void;
   onStudy: () => void;
   onSelectLevel: (level: 'N5' | 'N4' | 'N3') => void;
   onSelectSessionSize: (size: 5 | 10) => void;
@@ -29,6 +30,7 @@ export function Dashboard({
   resumeAvailable,
   levelSummaries,
   onRemoveBookmark,
+  onToggleBookmark,
   onStudy,
   onSelectLevel,
   onSelectSessionSize,
@@ -64,7 +66,11 @@ export function Dashboard({
           </Link>
         </section>
       </div>
-      <BookmarkList bookmarks={bookmarks} onRemoveBookmark={onRemoveBookmark} />
+      <BookmarkList
+        bookmarks={bookmarks}
+        onRemoveBookmark={onRemoveBookmark}
+        onToggleBookmark={onToggleBookmark}
+      />
     </section>
   );
 }

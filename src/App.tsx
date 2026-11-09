@@ -9,6 +9,7 @@ import { Updates } from './components/Updates';
 import { KanaPage } from './components/KanaPage';
 import { ProgressPage } from './components/ProgressPage';
 import { WordFinder } from './components/WordFinder';
+import { BookmarkStudy } from './components/BookmarkStudy';
 import { useStudyProgress } from './hooks/useStudyProgress';
 import { useVocabulary } from './hooks/useVocabulary';
 import { readStorage, writeStorage } from './lib/study';
@@ -316,6 +317,7 @@ function App() {
               resumeAvailable={index > 0 && index < quest.length}
               levelSummaries={levelSummaries}
               onRemoveBookmark={removeBookmark}
+              onToggleBookmark={toggleBookmarkById}
               onStudy={startStudy}
               onSelectLevel={selectStudyLevel}
               onSelectSessionSize={setSessionSize}
@@ -334,6 +336,10 @@ function App() {
               onToggleBookmark={toggleBookmarkById}
             />
           }
+        />
+        <Route
+          path="/bookmark-study"
+          element={<BookmarkStudy bookmarks={bookmarks} onRemoveBookmark={removeBookmark} />}
         />
         <Route path="/kana" element={<KanaPage />} />
         <Route

@@ -80,7 +80,7 @@ export const readProgressByDate = (level?: 'N5' | 'N4' | 'N3') => {
   return result;
 };
 
-const shuffle = <T>(items: T[]) => {
+export const shuffle = <T>(items: T[]) => {
   const result = [...items];
   for (let index = result.length - 1; index > 0; index -= 1) {
     const randomIndex = Math.floor(Math.random() * (index + 1));

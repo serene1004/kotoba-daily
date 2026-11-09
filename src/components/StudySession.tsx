@@ -15,6 +15,7 @@ type Props = {
   onNext: () => void;
   isBookmarked: boolean;
   onToggleBookmark: () => void;
+  isBookmarkReview?: boolean;
 };
 
 export function StudySession({
@@ -25,19 +26,21 @@ export function StudySession({
   onNext,
   isBookmarked,
   onToggleBookmark,
+  isBookmarkReview = false,
 }: Props) {
   const [answer, setAnswer] = useState('');
   const [shown, setShown] = useState(false);
   const [skipped, setSkipped] = useState(false);
   const [showFurigana, setShowFurigana] = useState(() => readStorage('showFurigana', false));
-  const pendingSkipKey = word ? `pendingSkip:${word.id}:${todayKey()}` : '';
+  const wordId = word?.id ?? '';
+  const pendingSkipKey = word && !isBookmarkReview ? `pendingSkip:${word.id}:${todayKey()}` : '';
 
   useEffect(() => {
     const pendingSkip = pendingSkipKey ? readStorage(pendingSkipKey, false) : false;
     setAnswer('');
     setSkipped(pendingSkip);
     setShown(pendingSkip);
-  }, [pendingSkipKey]);
+  }, [pendingSkipKey, wordId]);
 
   if (!word) {
     return (
@@ -102,8 +105,8 @@ export function StudySession({
     <section className={styles.quest}>
       <div className={styles['quest-head']}>
         <div>
-          <p className="eyebrow">TODAY</p>
-          <h2>오늘 학습</h2>
+          <p className="eyebrow">{isBookmarkReview ? 'BOOKMARK REVIEW' : 'TODAY'}</p>
+          <h2>{isBookmarkReview ? '북마크 복습' : '오늘 학습'}</h2>
         </div>
         <b>
           {progress + 1} / {total}
@@ -209,7 +212,7 @@ export function StudySession({
               type="button"
               onClick={() => moveNext(onNext)}
             >
-              {isLast ? '오늘 학습 완료하기' : '다음 단어 보기'}
+              {isLast && !isBookmarkReview ? '오늘 학습 완료하기' : '다음 단어 보기'}
             </button>
           ) : (
             <>
@@ -221,7 +224,7 @@ export function StudySession({
                 type="button"
                 onClick={() => finishAnswer(true)}
               >
-                {isLast ? '정답이에요 · 완료' : '정답이에요'}
+                {isLast && !isBookmarkReview ? '정답이에요 · 완료' : '정답이에요'}
               </button>
             </>
           )}

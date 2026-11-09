@@ -397,14 +397,30 @@
   margin: 0;
   font-size: var(--font-size-2xl);
 }
-.bookmarks-heading > b {
-  color: #d96651;
-  font:
-    700 var(--font-size-lg) 'M PLUS Rounded 1c',
-    sans-serif;
+.bookmark-title .eyebrow {
+  margin-bottom: var(--space-2);
+}
+.bookmark-count {
+  margin: var(--space-2) 0 0;
+  color: var(--muted);
+  font-size: var(--font-size-md);
+}
+.bookmark-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: calc(var(--space-6) * -1) 0 var(--space-5);
+}
+.bookmark-review {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-6);
+  text-decoration: none;
 }
 .bookmark-list {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
 }
 .bookmark-empty {
@@ -445,32 +461,75 @@
   opacity: 0.4;
 }
 .bookmark-item {
+  position: relative;
   display: flex;
+  min-width: 0;
+  min-height: 104px;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-6);
-  padding: var(--space-6) var(--space-7);
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
   border: 1px solid #f1ddd1;
   border-radius: var(--space-6);
   background: #fffaf7;
+  transition:
+    border-color 180ms var(--ease-out),
+    transform 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out);
 }
-.bookmark-item strong {
+.bookmark-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 10px 24px rgb(75 45 35 / 8%);
+}
+.bookmark-detail {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+}
+.bookmark-detail:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -4px;
+}
+.bookmark-content {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  justify-items: start;
+  pointer-events: none;
+}
+.bookmark-content strong {
   font:
-    500 var(--font-size-3xl) 'Noto Sans JP',
+    500 var(--font-size-2xl) 'Noto Sans JP',
     sans-serif;
+}
+.bookmark-item:hover .bookmark-content strong {
+  color: var(--accent-strong);
+}
+.bookmark-content span {
+  max-width: 100%;
+  margin-top: var(--space-1);
+  color: var(--muted);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 .bookmark-item rt {
   color: #a84631;
   font-size: 0.42em;
 }
-.bookmark-item p {
-  margin: var(--space-3) 0 0;
-  color: #6f6258;
-}
 .bookmark-actions {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
-  gap: var(--space-5);
+  gap: var(--space-1);
 }
 .icon-button {
   position: relative;
@@ -557,8 +616,13 @@
     grid-row: 1;
   }
   .bookmark-item {
-    flex-direction: column;
-    align-items: flex-start;
+    padding: var(--space-3) var(--space-4);
+  }
+  .bookmark-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bookmark-toolbar {
+    margin: var(--space-4) 0;
   }
 }
 
@@ -580,8 +644,7 @@
 :global([data-theme='dark']) .stats span,
 :global([data-theme='dark']) .learning-heading > p:last-child,
 :global([data-theme='dark']) .weekly-chart-head > span,
-:global([data-theme='dark']) .chart-day,
-:global([data-theme='dark']) .bookmark-item p {
+:global([data-theme='dark']) .chart-day {
   color: var(--muted);
 }
 :global([data-theme='dark']) .calendar-today {

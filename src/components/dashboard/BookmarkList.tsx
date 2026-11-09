@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react';
 import { BookOpen, BookmarkMinus, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Furigana } from '../Furigana';
+import { Link } from 'react-router-dom';
+import { WordDetailDialog } from '../WordDetailDialog';
 import styles from '../Dashboard.module.css';
 import type { Word } from '../../types';
 
-type Props = { bookmarks: Word[]; onRemoveBookmark: (id: string) => void };
+type Props = {
+  bookmarks: Word[];
+  onRemoveBookmark: (id: string) => void;
+  onToggleBookmark: (id: string) => void;
+};
 const BOOKMARKS_PER_PAGE = 10;
 
-export function BookmarkList({ bookmarks, onRemoveBookmark }: Props) {
+export function BookmarkList({ bookmarks, onRemoveBookmark, onToggleBookmark }: Props) {
   const [page, setPage] = useState(1);
+  const [selectedWord, setSelectedWord] = useState<Word | null>(null);
   const pageCount = Math.ceil(bookmarks.length / BOOKMARKS_PER_PAGE);
   const visibleBookmarks = bookmarks.slice(
     (page - 1) * BOOKMARKS_PER_PAGE,
@@ -22,21 +28,32 @@ export function BookmarkList({ bookmarks, onRemoveBookmark }: Props) {
   return (
     <section className={styles.bookmarks}>
       <div className={styles['bookmarks-heading']}>
-        <div>
+        <div className={styles['bookmark-title']}>
           <p className="eyebrow">BOOKMARKS</p>
           <h2>북마크</h2>
+          <p className={styles['bookmark-count']}>총 {bookmarks.length}개 단어를 저장했어요.</p>
         </div>
-        <b>{bookmarks.length}</b>
       </div>
+      {bookmarks.length > 0 && (
+        <div className={styles['bookmark-toolbar']}>
+          <Link className={`${styles['bookmark-review']} button-primary`} to="/bookmark-study">
+            북마크 단어 복습하기
+          </Link>
+        </div>
+      )}
       {bookmarks.length ? (
         <div className={styles['bookmark-list']}>
           {visibleBookmarks.map((word) => (
             <article key={word.id} className={styles['bookmark-item']}>
-              <div>
-                <strong>
-                  <Furigana expression={word.jp} reading={word.reading} />
-                </strong>
-                <p>{word.meaningKo}</p>
+              <button
+                className={styles['bookmark-detail']}
+                type="button"
+                onClick={() => setSelectedWord(word)}
+                aria-label={`${word.jp}, 상세 정보 보기`}
+              />
+              <div className={styles['bookmark-content']}>
+                <strong>{word.jp}</strong>
+                <span>{word.meaningKo}</span>
               </div>
               <div className={styles['bookmark-actions']}>
                 <a
@@ -101,6 +118,14 @@ export function BookmarkList({ bookmarks, onRemoveBookmark }: Props) {
             <ChevronRight size={18} aria-hidden="true" />
           </button>
         </nav>
+      )}
+      {selectedWord && (
+        <WordDetailDialog
+          word={selectedWord}
+          isBookmarked={bookmarks.some(({ id }) => id === selectedWord.id)}
+          onToggleBookmark={onToggleBookmark}
+          onClose={() => setSelectedWord(null)}
+        />
       )}
     </section>
   );
