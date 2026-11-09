@@ -178,13 +178,16 @@ export function useStudyProgress(words: Word[], level: string = 'N5', sessionSiz
     writeStorage(`difficulty:${sessionKey}`, difficulty);
   };
 
-  const toggleBookmark = () => {
-    if (!word) return;
-    const nextIds = bookmarkIds.includes(word.id)
-      ? bookmarkIds.filter((id) => id !== word.id)
-      : [...bookmarkIds, word.id];
+  const toggleBookmarkById = (id: string) => {
+    const nextIds = bookmarkIds.includes(id)
+      ? bookmarkIds.filter((bookmarkId) => bookmarkId !== id)
+      : [...bookmarkIds, id];
     setBookmarkIds(nextIds);
     writeStorage('bookmarkIds', nextIds);
+  };
+
+  const toggleBookmark = () => {
+    if (word) toggleBookmarkById(word.id);
   };
 
   const removeBookmark = (id: string) => {
@@ -238,6 +241,7 @@ export function useStudyProgress(words: Word[], level: string = 'N5', sessionSiz
     rateSessionDifficulty,
     advance,
     toggleBookmark,
+    toggleBookmarkById,
     removeBookmark,
     startAnotherQuest,
     restartUnstartedQuest,

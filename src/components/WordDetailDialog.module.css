@@ -1,0 +1,138 @@
+.dialog {
+  width: min(560px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(84vh, 760px);
+  overflow-y: auto;
+  padding: var(--space-7);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--border));
+  border-radius: var(--space-7);
+  background: var(--page);
+  color: var(--ink);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent),
+    0 24px 80px rgb(35 25 20 / 24%);
+}
+.dialog::backdrop {
+  background: rgb(35 25 20 / 52%);
+  backdrop-filter: blur(3px);
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.level {
+  padding: var(--space-2) var(--space-4);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+.close {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+}
+.close:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+.word {
+  padding: var(--space-5) 0 var(--space-6);
+  text-align: center;
+}
+.word h2 {
+  margin: 0;
+  font:
+    500 clamp(44px, 10vw, 64px)/1.2 'Noto Sans JP',
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+.word rt {
+  color: var(--accent-strong);
+  font-size: 0.3em;
+}
+.details {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.details > div {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-3);
+}
+.details dt {
+  color: var(--muted);
+  font-size: var(--font-size-sm);
+}
+.details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.example {
+  margin: 0;
+}
+.example p {
+  margin: var(--space-2) 0;
+  line-height: 1.7;
+}
+.example p:last-child {
+  color: var(--muted);
+  font-size: var(--font-size-sm);
+}
+.example .exampleJapanese {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: var(--font-size-lg);
+}
+.example rt {
+  color: var(--accent-strong);
+  font-size: 0.65em;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+.actions button,
+.actions a {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent-strong);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  text-decoration: none;
+}
+.actions button:hover,
+.actions a:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+@media (max-width: 480px) {
+  .dialog {
+    padding: var(--space-5);
+  }
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}

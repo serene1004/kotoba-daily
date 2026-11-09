@@ -8,6 +8,7 @@ import { StudyExitDialog } from './components/StudyExitDialog';
 import { Updates } from './components/Updates';
 import { KanaPage } from './components/KanaPage';
 import { ProgressPage } from './components/ProgressPage';
+import { WordFinder } from './components/WordFinder';
 import { useStudyProgress } from './hooks/useStudyProgress';
 import { useVocabulary } from './hooks/useVocabulary';
 import { readStorage, writeStorage } from './lib/study';
@@ -83,6 +84,7 @@ function App() {
     restartUnstartedQuest,
     startAnotherQuest,
     toggleBookmark,
+    toggleBookmarkById,
   } = useStudyProgress(words, level, sessionSize);
   const isActiveStudy =
     location.pathname === '/study' && studyStarted && quest.length > 0 && index < quest.length;
@@ -254,6 +256,14 @@ function App() {
             className={`${styles['header-actions']} ${menuOpen ? styles['menu-open'] : ''}`}
           >
             <button
+              className={`${styles.updates} ${styles.modeToggle} ${location.pathname === '/words' ? styles['current-page'] : ''}`}
+              type="button"
+              aria-current={location.pathname === '/words' ? 'page' : undefined}
+              onClick={() => navigate('/words')}
+            >
+              JLPT 사전
+            </button>
+            <button
               className={`${styles.updates} ${styles.modeToggle} ${location.pathname === '/progress' ? styles['current-page'] : ''}`}
               type="button"
               aria-current={location.pathname === '/progress' ? 'page' : undefined}
@@ -313,6 +323,18 @@ function App() {
           }
         />
         <Route path="/study" element={study} />
+        <Route
+          path="/words"
+          element={
+            <WordFinder
+              words={words}
+              bookmarks={bookmarks}
+              loading={loading}
+              failedLevels={failedLevels}
+              onToggleBookmark={toggleBookmarkById}
+            />
+          }
+        />
         <Route path="/kana" element={<KanaPage />} />
         <Route
           path="/progress"
