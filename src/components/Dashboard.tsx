@@ -37,7 +37,7 @@ export function Dashboard({
   onSelectLevel,
   onSelectSessionSize,
 }: Props) {
-  const activity = useDashboardActivity(selectedLevel);
+  const activity = useDashboardActivity();
   const [activeTab, setActiveTab] = useState<'vocabulary' | 'quiz' | 'kana'>('vocabulary');
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const tabs = [
@@ -112,10 +112,19 @@ export function Dashboard({
             />
           ) : activeTab === 'quiz' ? (
             <div className={styles.learningContent}>
-              <div className={styles['learning-heading']}>
-                <p className="eyebrow">{selectedLevel} VOCABULARY QUIZ</p>
-                <h2>뜻을 보고 단어를 골라요</h2>
-                <p>한국어 뜻에 맞는 일본어 단어를 선택하고 바로 정답을 확인해요.</p>
+              <div className={styles['learning-header']}>
+                <div className={styles['learning-heading']}>
+                  <p className="eyebrow">{selectedLevel} VOCABULARY QUIZ</p>
+                  <h2>뜻을 보고 단어를 골라요</h2>
+                  <p>한국어 뜻에 맞는 일본어 단어를 선택하고 바로 정답을 확인해요.</p>
+                </div>
+                <Link
+                  className={`${styles.primary} button-primary`}
+                  to="/quiz"
+                  state={{ startImmediately: true }}
+                >
+                  {selectedLevel} 퀴즈 시작하기
+                </Link>
               </div>
               <div className={styles['level-options']} role="group" aria-label="퀴즈 레벨 선택">
                 {levelSummaries.map(({ level, total }) => (
@@ -131,28 +140,48 @@ export function Dashboard({
                   </button>
                 ))}
               </div>
-              <Link
-                className={`${styles.primary} button-primary`}
-                to="/quiz"
-                state={{ startImmediately: true }}
-              >
-                {selectedLevel} 퀴즈 시작하기
-              </Link>
             </div>
           ) : (
             <div className={styles.learningContent}>
-              <div className={styles['learning-heading']}>
-                <p className="eyebrow">HIRAGANA & KATAKANA</p>
-                <h2>가나를 쓰며 익혀요</h2>
-                <p>히라가나와 가타카나를 고르고 획순에 맞춰 연습해요.</p>
+              <div className={styles['learning-header']}>
+                <div className={styles['learning-heading']}>
+                  <p className="eyebrow">HIRAGANA & KATAKANA</p>
+                  <h2>가나를 쓰며 익혀요</h2>
+                  <p>히라가나와 가타카나를 고르고 획순에 맞춰 연습해요.</p>
+                </div>
+                <Link className={`${styles.primary} button-primary`} to="/kana">
+                  가나 공부 시작하기
+                </Link>
               </div>
-              <Link className={`${styles.primary} button-primary`} to="/kana">
-                가나 공부 시작하기
-              </Link>
             </div>
           )}
         </section>
       </div>
+      <section className={styles['home-activity']} aria-labelledby="home-activity-title">
+        <div className={styles['home-activity-heading']}>
+          <div>
+            <p className="eyebrow">LEARNING SUMMARY</p>
+            <h2 id="home-activity-title">학습 현황</h2>
+          </div>
+          <Link className={styles['home-activity-link']} to="/progress">
+            전체 통계 보기
+          </Link>
+        </div>
+        <div className={styles['home-activity-stats']}>
+          <article>
+            <b>{activity.todayStudied}</b>
+            <span>오늘 학습</span>
+          </article>
+          <article>
+            <b>{activity.streak}</b>
+            <span>연속 학습일</span>
+          </article>
+          <article>
+            <b>{activity.studiedCount}</b>
+            <span>누적 학습</span>
+          </article>
+        </div>
+      </section>
       <BookmarkList
         bookmarks={bookmarks}
         onRemoveBookmark={onRemoveBookmark}

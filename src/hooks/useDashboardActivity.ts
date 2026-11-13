@@ -1,15 +1,12 @@
-import { useState } from 'react';
 import { readProgressByDate } from '../lib/study';
 
 const weekdays = '일월화수목금토'.split('');
 const dateKey = (date: Date) => date.toLocaleDateString('sv-SE');
 const DAILY_GOAL = 10;
 
-export function useDashboardActivity(selectedLevel: 'N5' | 'N4' | 'N3') {
-  const [showAllLevels, setShowAllLevels] = useState(false);
+export function useDashboardActivity(selectedLevel?: 'N5' | 'N4' | 'N3') {
   const today = new Date();
-  const allProgressByDate = readProgressByDate();
-  const progressByDate = readProgressByDate(showAllLevels ? undefined : selectedLevel);
+  const progressByDate = readProgressByDate(selectedLevel);
   const studiedCount = Object.values(progressByDate).reduce((total, count) => total + count, 0);
   const todayStudied = progressByDate[dateKey(today)] || 0;
   const weeklyProgress = Array.from({ length: 7 }, (_, index) => {
@@ -35,11 +32,8 @@ export function useDashboardActivity(selectedLevel: 'N5' | 'N4' | 'N3') {
   })();
 
   return {
-    activityAvailable: Object.values(allProgressByDate).some((count) => count > 0),
     completedDates,
     progressByDate,
-    setShowAllLevels,
-    showAllLevels,
     studiedCount,
     streak,
     today,

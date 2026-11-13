@@ -1,19 +1,21 @@
+import { ChevronDown } from 'lucide-react';
 import styles from '../Dashboard.module.css';
 import { ActivityCalendar } from './ActivityCalendar';
 import { WeeklyActivityChart } from './WeeklyActivityChart';
 import type { useDashboardActivity } from '../../hooks/useDashboardActivity';
 
+type ActivityLevel = 'N5' | 'N4' | 'N3' | 'all';
+
 type Props = {
-  selectedLevel: 'N5' | 'N4' | 'N3';
+  selectedLevel: ActivityLevel;
   activity: ReturnType<typeof useDashboardActivity>;
+  onSelectLevel: (level: ActivityLevel) => void;
 };
 
-export function LearningActivity({ selectedLevel, activity }: Props) {
+export function LearningActivity({ selectedLevel, activity, onSelectLevel }: Props) {
   const {
     completedDates,
     progressByDate,
-    setShowAllLevels,
-    showAllLevels,
     studiedCount,
     streak,
     today,
@@ -24,27 +26,22 @@ export function LearningActivity({ selectedLevel, activity }: Props) {
 
   return (
     <>
-      <div className={styles['activity-toolbar']} aria-label="학습 기록 집계 기준">
+      <label className={styles['activity-toolbar']} htmlFor="activity-level">
         <span>집계 기준</span>
-        <div role="group" aria-label="학습 기록 범위">
-          <button
-            type="button"
-            aria-pressed={!showAllLevels}
-            className={!showAllLevels ? styles['scope-selected'] : undefined}
-            onClick={() => setShowAllLevels(false)}
+        <span className={styles['activity-select-wrap']}>
+          <select
+            id="activity-level"
+            value={selectedLevel}
+            onChange={(event) => onSelectLevel(event.target.value as ActivityLevel)}
           >
-            선택 레벨 · {selectedLevel}
-          </button>
-          <button
-            type="button"
-            aria-pressed={showAllLevels}
-            className={showAllLevels ? styles['scope-selected'] : undefined}
-            onClick={() => setShowAllLevels(true)}
-          >
-            전체 레벨
-          </button>
-        </div>
-      </div>
+            <option value="all">전체 레벨</option>
+            <option value="N5">N5</option>
+            <option value="N4">N4</option>
+            <option value="N3">N3</option>
+          </select>
+          <ChevronDown size={16} aria-hidden="true" />
+        </span>
+      </label>
       <div className={styles.stats}>
         <article>
           <b>{todayStudied}</b>

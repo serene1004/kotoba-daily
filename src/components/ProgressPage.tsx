@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useDashboardActivity } from '../hooks/useDashboardActivity';
 import { LearningActivity } from './dashboard/LearningActivity';
 import styles from './Dashboard.module.css';
@@ -15,7 +16,8 @@ type Props = {
 };
 
 export function ProgressPage({ selectedLevel, levelSummaries }: Props) {
-  const activity = useDashboardActivity(selectedLevel);
+  const [activityLevel, setActivityLevel] = useState<'N5' | 'N4' | 'N3' | 'all'>(selectedLevel);
+  const activity = useDashboardActivity(activityLevel === 'all' ? undefined : activityLevel);
 
   return (
     <section>
@@ -60,7 +62,11 @@ export function ProgressPage({ selectedLevel, levelSummaries }: Props) {
           })}
         </div>
       </section>
-      <LearningActivity selectedLevel={selectedLevel} activity={activity} />
+      <LearningActivity
+        selectedLevel={activityLevel}
+        activity={activity}
+        onSelectLevel={setActivityLevel}
+      />
     </section>
   );
 }

@@ -34,14 +34,26 @@ export function LearningLevelSelector({
 
   return (
     <div className={styles.learningContent} aria-labelledby="learning-title">
-      <div className={styles['learning-heading']}>
-        <p className="eyebrow">JLPT VOCABULARY</p>
-        <h2 id="learning-title">JLPT 단어를 학습해요</h2>
-        <p>
-          {studiedCount && todayStudied
-            ? `오늘 ${todayStudied}개를 학습했어요. 이어서 공부해 볼까요?`
-            : 'N5부터 N3까지, 원하는 레벨과 학습량을 고르고 시작해요.'}
-        </p>
+      <div className={styles['learning-header']}>
+        <div className={styles['learning-heading']}>
+          <p className="eyebrow">JLPT VOCABULARY</p>
+          <h2 id="learning-title">JLPT 단어를 학습해요</h2>
+          <p>
+            {studiedCount && todayStudied
+              ? `오늘 ${todayStudied}개를 학습했어요. 이어서 공부해 볼까요?`
+              : 'N5부터 N3까지, 원하는 레벨과 학습량을 고르고 시작해요.'}
+          </p>
+        </div>
+        <button
+          className={`${styles.primary} button-primary`}
+          type="button"
+          disabled={!selectedLevelAvailable}
+          onClick={onStudy}
+        >
+          {selectedLevelAvailable
+            ? `${selectedLevel} ${resumeAvailable ? '학습 이어하기' : '단어 공부 시작하기'}`
+            : `${selectedLevel} 데이터 없음`}
+        </button>
       </div>
       <div className={styles['level-list']}>
         {levelSummaries.map(({ level, total, learned, dueReviews }) => {
@@ -94,16 +106,6 @@ export function LearningLevelSelector({
           </button>
         ))}
       </div>
-      <button
-        className={`${styles.primary} button-primary`}
-        type="button"
-        disabled={!selectedLevelAvailable}
-        onClick={onStudy}
-      >
-        {selectedLevelAvailable
-          ? `${selectedLevel} ${resumeAvailable ? '학습 이어하기' : '단어 공부 시작하기'}`
-          : `${selectedLevel} 데이터 없음`}
-      </button>
     </div>
   );
 }

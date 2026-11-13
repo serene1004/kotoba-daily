@@ -33,14 +33,14 @@ export function BookmarkList({ bookmarks, onRemoveBookmark, onToggleBookmark }: 
           <h2>북마크</h2>
           <p className={styles['bookmark-count']}>총 {bookmarks.length}개 단어를 저장했어요.</p>
         </div>
+        {bookmarks.length > 0 && (
+          <div className={styles['bookmark-toolbar']}>
+            <Link className={`${styles['bookmark-review']} button-primary`} to="/bookmark-study">
+              북마크 단어 복습하기
+            </Link>
+          </div>
+        )}
       </div>
-      {bookmarks.length > 0 && (
-        <div className={styles['bookmark-toolbar']}>
-          <Link className={`${styles['bookmark-review']} button-primary`} to="/bookmark-study">
-            북마크 단어 복습하기
-          </Link>
-        </div>
-      )}
       {bookmarks.length ? (
         <div className={styles['bookmark-list']}>
           {visibleBookmarks.map((word) => (
