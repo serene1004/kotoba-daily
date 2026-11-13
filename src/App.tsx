@@ -10,6 +10,7 @@ import { KanaPage } from './components/KanaPage';
 import { ProgressPage } from './components/ProgressPage';
 import { WordFinder } from './components/WordFinder';
 import { BookmarkStudy } from './components/BookmarkStudy';
+import { VocabularyQuiz } from './components/VocabularyQuiz';
 import { useStudyProgress } from './hooks/useStudyProgress';
 import { useVocabulary } from './hooks/useVocabulary';
 import { readStorage, writeStorage } from './lib/study';
@@ -325,6 +326,26 @@ function App() {
           }
         />
         <Route path="/study" element={study} />
+        <Route
+          path="/quiz"
+          element={
+            loading ? (
+              <section className={styles.complete}>
+                <p>퀴즈 단어를 준비하고 있어요.</p>
+              </section>
+            ) : (
+              <VocabularyQuiz
+                words={words}
+                level={level}
+                size={sessionSize}
+                onSelectLevel={selectStudyLevel}
+                startImmediately={Boolean(
+                  (location.state as { startImmediately?: boolean } | null)?.startImmediately,
+                )}
+              />
+            )
+          }
+        />
         <Route
           path="/words"
           element={

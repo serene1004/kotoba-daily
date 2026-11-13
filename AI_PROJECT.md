@@ -19,10 +19,10 @@
 
 | 범위        | 명령                                                  | 비고                                                             |
 | ----------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
-| 전체 검증   | `pnpm verify`                                         | 린트, 포맷, N5·N4·N3 데이터 검사, 프로덕션 빌드                  |
+| 전체 검증   | `pnpm verify`                                         | 린트, 포맷, 단위 테스트, N5·N4·N3 데이터 검사, 프로덕션 빌드     |
 | 포맷 / 린트 | `pnpm format:check` / `pnpm lint`                     | 포맷 검사 범위는 스크립트 glob 기준                              |
 | 타입 검사   | `pnpm build`                                          | TypeScript 프로젝트 빌드와 Vite 프로덕션 빌드를 함께 수행        |
-| 단위 테스트 | 미확인                                                | `package.json`에 테스트 스크립트 없음                            |
+| 단위 테스트 | `pnpm test`                                           | Node.js 내장 테스트 러너로 퀴즈 출제 로직 검사                   |
 | 통합 / E2E  | 미확인                                                | `package.json`에 E2E 스크립트 없음                               |
 | 빌드        | `pnpm build`                                          | `DEPLOY_TARGET=github`는 GitHub Pages 경로 설정이 필요할 때 사용 |
 | 데이터 검사 | `pnpm check:data public/data/n5.json`                 | N4/N3도 같은 방식으로 검사. `pnpm verify`는 세 레벨 모두 검사    |
