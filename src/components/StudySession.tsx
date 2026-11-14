@@ -212,7 +212,7 @@ export function StudySession({
               type="button"
               onClick={() => moveNext(onNext)}
             >
-              {isLast && !isBookmarkReview ? '오늘 학습 완료하기' : '다음 단어 보기'}
+              {isLast ? (isBookmarkReview ? '복습 완료' : '오늘 학습 완료하기') : '다음 단어 보기'}
             </button>
           ) : (
             <>
@@ -224,7 +224,11 @@ export function StudySession({
                 type="button"
                 onClick={() => finishAnswer(true)}
               >
-                {isLast && !isBookmarkReview ? '정답이에요 · 완료' : '정답이에요'}
+                {isLast
+                  ? isBookmarkReview
+                    ? '정답이에요 · 복습 완료'
+                    : '정답이에요 · 완료'
+                  : '정답이에요'}
               </button>
             </>
           )}
