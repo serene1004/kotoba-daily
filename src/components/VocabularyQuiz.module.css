@@ -134,6 +134,30 @@
   color: var(--accent-strong);
   font-size: 2.5rem;
 }
+:global([data-theme='dark']) .panel {
+  border-color: var(--border);
+  background: var(--surface);
+}
+:global([data-theme='dark']) .meter {
+  background: var(--accent-soft);
+}
+:global([data-theme='dark']) .meter i {
+  background: var(--accent);
+}
+:global([data-theme='dark']) .question {
+  border-color: var(--border);
+  background: var(--paper);
+}
+:global([data-theme='dark']) .choices .correct {
+  border-color: #4e9b68;
+  background: #254331;
+  color: #d9f2df;
+}
+:global([data-theme='dark']) .choices .incorrect {
+  border-color: #d96b61;
+  background: #4a2a27;
+  color: #ffe1dc;
+}
 @media (max-width: 560px) {
   .panel {
     padding: var(--space-6);

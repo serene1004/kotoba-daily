@@ -7,6 +7,14 @@ export type Release = {
 
 export const releases: Release[] = [
   {
+    version: '0.6.1',
+    date: '2026.11.14',
+    title: '단어 퀴즈 다크 모드 오류를 수정했어요',
+    changes: [
+      '다크 모드에서 단어 퀴즈의 패널과 문제 카드가 밝은 색으로 보이던 문제를 해결했어요.',
+    ],
+  },
+  {
     version: '0.6.0',
     date: '2026.11.14',
     title: 'JLPT 단어 퀴즈를 추가하고 학습·사전 화면을 개선했어요',
