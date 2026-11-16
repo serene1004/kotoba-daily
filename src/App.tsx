@@ -103,7 +103,11 @@ function App() {
   const startStudy = () => {
     if (quest.length > 0 && index >= quest.length) {
       startAnotherQuest();
-    } else if (quest.length > 0 && index === 0 && currentQuestSize !== sessionSize) {
+    } else if (
+      quest.length > 0 &&
+      index === 0 &&
+      (currentQuestSize !== sessionSize || quest.length < sessionSize)
+    ) {
       restartUnstartedQuest();
     }
     setStudyStarted(true);
@@ -151,11 +155,7 @@ function App() {
               </button>
             ))}
           </div>
-          <button
-            className={`${styles.primary} button-primary`}
-            type="button"
-            onClick={() => setStudyStarted(true)}
-          >
+          <button className={`${styles.primary} button-primary`} type="button" onClick={startStudy}>
             {level} 단어 공부 시작하기
           </button>
         </section>

@@ -106,16 +106,19 @@ export const reviewDelay = (
 
 export const pickQuest = (
   words: Word[],
-  known: string[],
   progress: Record<string, WordProgress>,
   seen: string[],
   day: string,
   limit = 10,
 ) => {
-  const knownIds = new Set(known);
   const reviewSet = new Set(
     words
-      .filter(({ id }) => progress[id]?.nextReviewAt && progress[id].nextReviewAt <= day)
+      .filter(
+        ({ id }) =>
+          (progress[id]?.correctCount ?? 0) > 0 &&
+          progress[id]?.nextReviewAt &&
+          progress[id].nextReviewAt <= day,
+      )
       .map(({ id }) => id),
   );
   const seenSet = new Set(seen);
@@ -123,14 +126,12 @@ export const pickQuest = (
     words.filter((word) => reviewSet.has(word.id) && !seenSet.has(word.id)),
   ).slice(0, 3);
   const fresh = shuffle(
-    words.filter(
-      (word) => !knownIds.has(word.id) && !reviewSet.has(word.id) && !seenSet.has(word.id),
-    ),
+    words.filter((word) => !progress[word.id]?.correctCount && !seenSet.has(word.id)),
   ).slice(0, 7);
   const fallback = shuffle(
     words.filter(
       (word) =>
-        !knownIds.has(word.id) &&
+        !progress[word.id]?.correctCount &&
         !reviewSet.has(word.id) &&
         !seenSet.has(word.id) &&
         !fresh.includes(word),
